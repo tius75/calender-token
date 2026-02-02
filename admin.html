@@ -1,25 +1,64 @@
 <!DOCTYPE html>
-<html>
-<head><title>Admin Token Generator</title></head>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin Panel - Kalender Tius</title>
+    <style>
+        body { font-family: sans-serif; padding: 20px; background: #f4f4f4; }
+        .card { background: white; padding: 20px; border-radius: 8px; max-width: 400px; margin: auto; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        input { width: 100%; padding: 10px; margin: 10px 0; box-sizing: border-box; }
+        button { width: 100%; padding: 10px; background: #D30000; color: white; border: none; cursor: pointer; }
+        #panelAdmin { display: none; }
+    </style>
+</head>
 <body>
-    <h2>Generator Token Tius</h2>
-    <input type="date" id="expDate">
-    <select id="paket">
-        <option value="30">1 Bulan</option>
-        <option value="90">3 Bulan</option>
-        <option value="365">1 Tahun</option>
-        <option value="9999">Unlimited</option>
-    </select>
-    <button onclick="generate()">Buat Token</button>
-    <p>Token Anda: <strong id="result"></strong></p>
 
-    <script>
-        function generate() {
-            const dateVal = document.getElementById('expDate').value.replace(/-/g, '');
-            const secret = "TIUS_SECRET_2026";
-            const hash = btoa(dateVal + secret).substring(0, 8);
-            document.getElementById('result').innerText = dateVal + "-" + hash;
+<div class="card" id="loginBox">
+    <h3>Login Admin</h3>
+    <input type="password" id="passAdmin" placeholder="Masukkan Password Admin">
+    <button onclick="loginAdmin()">Masuk</button>
+</div>
+
+<div class="card" id="panelAdmin">
+    <h3>Pengaturan Token</h3>
+    <p>Token Saat Ini: <b id="tokenSekarang">-</b></p>
+    <input type="text" id="newToken" placeholder="Masukkan Token Baru">
+    <button onclick="updateToken()">Update Token</button>
+    <br><br>
+    <button onclick="logout()" style="background:#666">Keluar</button>
+</div>
+
+<script>
+    const PASS_RAHASIA = "admin123"; // Ganti password admin di sini
+
+    function loginAdmin() {
+        const input = document.getElementById('passAdmin').value;
+        if(input === PASS_RAHASIA) {
+            document.getElementById('loginBox').style.display = 'none';
+            document.getElementById('panelAdmin').style.display = 'block';
+            tampilkanToken();
+        } else {
+            alert("Password Salah!");
         }
-    </script>
+    }
+
+    function tampilkanToken() {
+        const t = localStorage.getItem('token_aktif_tius') || "TIUS2026";
+        document.getElementById('tokenSekarang').innerText = t;
+    }
+
+    function updateToken() {
+        const tokenBaru = document.getElementById('newToken').value;
+        if(tokenBaru.length < 3) return alert("Token terlalu pendek!");
+        
+        localStorage.setItem('token_aktif_tius', tokenBaru);
+        alert("Token berhasil diperbarui menjadi: " + tokenBaru);
+        tampilkanToken();
+    }
+
+    function logout() {
+        location.reload();
+    }
+</script>
 </body>
 </html>
