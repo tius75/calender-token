@@ -306,9 +306,17 @@ function updateDetail(date, pasaran) {
     const detailDiv = document.getElementById('detail');
     if (!detailDiv) return;
 
+    function updateDetail(date, pasaran) {
+    const detailDiv = document.getElementById('detail');
+    if (!detailDiv) return;
+
     const h = HARI[date.getDay()];
     const wetonKey = `${h} ${pasaran}`;
     const neptu = NEPTU_HARI[h] + NEPTU_PASARAN[pasaran];
+    
+    // --- TAMBAHKAN BARIS INI ---
+    const nHari = NEPTU_HARI[h];
+    const nPasaran = NEPTU_PASARAN[pasaran];
     
     const wukuName = getWuku(date);
     const infoJawa = getTanggalJawa(date); 
