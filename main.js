@@ -306,17 +306,14 @@ function updateDetail(date, pasaran) {
     const detailDiv = document.getElementById('detail');
     if (!detailDiv) return;
 
-    function updateDetail(date, pasaran) {
-    const detailDiv = document.getElementById('detail');
-    if (!detailDiv) return;
-
     const h = HARI[date.getDay()];
     const wetonKey = `${h} ${pasaran}`;
-    const neptu = NEPTU_HARI[h] + NEPTU_PASARAN[pasaran];
     
-    // --- TAMBAHKAN BARIS INI ---
+    // Deklarasikan variabel pendukung neptu agar tidak error
     const nHari = NEPTU_HARI[h];
     const nPasaran = NEPTU_PASARAN[pasaran];
+    const neptu = nHari + nPasaran;
+   
     
     const wukuName = getWuku(date);
     const infoJawa = getTanggalJawa(date); 
@@ -568,27 +565,53 @@ function generateCalendar() {
 }
 
 // ==========================================
-// LOGIKA TOKEN (FIXED)
+// LOGIKA TOKEN PRO
 // ==========================================
+
 function checkTokenLogic(token) {
-    // Ambil token sah yang diset admin, jika tidak ada pakai default TIUS2026
-    const tokenSah = localStorage.getItem('token_aktif_tius') || "TIUS2026";
-    return token === tokenSah;
-}
+    if (!token) return false;
 
-function showTokenModal() {
-    const userInput = prompt("Masukkan Token Akses untuk melihat detail:");
-    if (userInput === null) return; 
+    const expiryDateStr = DAFTAR_TOKEN_AKTIF[token];
+    
+    if (!expiryDateStr) return false; // Token tidak terdaftar
 
-    if (checkTokenLogic(userInput)) {
-        localStorage.setItem('kalender_token_tius', userInput);
-        alert("Token Berhasil! Silakan klik tanggal kembali.");
-        location.reload(); // Refresh agar status klik terbuka
+    const today = new Date();
+    today.setHours(0, 0, 0, 0); // Reset jam agar perbandingan tanggal akurat
+    const expiryDate = new Date(expiryDateStr);
+
+    if (today <= expiryDate) {
+        return true; // Token masih berlaku
     } else {
-        alert("Token Salah! Silakan hubungi admin.");
+        alert("Masa berlaku token '" + token + "' telah habis.");
+        localStorage.removeItem('kalender_token_tius');
+        return false;
     }
 }
 
+function showTokenModal() {
+    // Pesan informatif untuk user
+    const msg = "Masukkan Token Akses.\n\nPilihan Paket:\n- 1 Bulan\n- 3 Bulan\n- 1 Tahun\n- Unlimited";
+    const userInput = prompt(msg);
+    
+    if (userInput === null) return;
+
+    const tokenInput = userInput.trim().toUpperCase();
+
+    if (checkTokenLogic(tokenInput)) {
+        localStorage.setItem('kalender_token_tius', tokenInput);
+        
+        // Cek jenis paket untuk notifikasi user
+        let infoPaket = "Aktif";
+        const exp = DAFTAR_TOKEN_AKTIF[tokenInput];
+        if (exp === "9999-12-31") infoPaket = "Unlimited (Abadi)";
+        else infoPaket = "Berlaku hingga: " + exp;
+
+        alert("Token Berhasil! Paket Anda: " + infoPaket);
+        location.reload(); 
+    } else {
+        alert("Token SALAH atau sudah EXPIRED!\nSilakan hubungi admin untuk pembelian token baru.");
+    }
+}
 // ==========================================
 // INITIAL START
 // ==========================================
