@@ -495,14 +495,6 @@ document.addEventListener("DOMContentLoaded", () => {
     if(next) next.onclick = () => { current.setMonth(current.getMonth() + 1); generateCalendar(); };
 });
 
-// START
-document.addEventListener("DOMContentLoaded", () => {
-    generateCalendar();
-    const prev = document.getElementById('prevMonth');
-    const next = document.getElementById('nextMonth');
-    if(prev) prev.onclick = () => { current.setMonth(current.getMonth() - 1); generateCalendar(); };
-    if(next) next.onclick = () => { current.setMonth(current.getMonth() + 1); generateCalendar(); };
-});
 
 function shareWhatsApp() {
     const text = document.getElementById('printableArea').innerText;
