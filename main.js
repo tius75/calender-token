@@ -1,4 +1,4 @@
-/**
+8/**
  * KALENDER JAWA MODERN - VERSI FINAL FIX 2026
  * Update: Windu Sancaya, Tahun Jawa (Filosofi), & Konzili
  */
@@ -264,39 +264,94 @@ const DATA_WATAK_NEPTU = {
     }
 };
 
-// DATA WUKU LENGKAP (30 Wuku)
-const DATA_WUKU = {
-    "Sinta": "Wuku Sinta memiliki sifat baik untuk memulai pekerjaan baru, memulai usaha, dan memulai hubungan. Orang yang lahir di wuku ini cocok untuk menjadi pemimpin karena memiliki jiwa kepemimpinan yang kuat. Namun perlu berhati-hati dalam mengambil keputusan besar.",
-    "Landep": "Wuku Landep cocok untuk aktivitas yang membutuhkan ketajaman pikiran seperti belajar, meneliti, atau memecahkan masalah. Orang wuku Landep biasanya cerdas dan analitis. Cocok untuk profesi di bidang hukum, pendidikan, atau teknologi.",
-    "Wukir": "Wuku Wukir baik untuk kegiatan fisik dan pekerjaan tangan. Cocok untuk bidang konstruksi, pertanian, atau olahraga. Orang wuku ini biasanya kuat fisiknya dan tahan banting.",
-    "Kurantil": "Wuku Kurantil cocok untuk pendidikan dan belajar. Baik untuk memulai studi baru atau mengembangkan keterampilan. Orang wuku ini biasanya pandai bergaul dan komunikatif.",
-    "Tolu": "Wuku Tolu baik untuk aktivitas sosial dan kemasyarakatan. Cocok untuk organisasi sosial atau kegiatan gotong royong. Orang wuku ini biasanya ramah dan disukai banyak orang.",
-    "Gumbreg": "Wuku Gumbreg cocok untuk kegiatan yang membutuhkan ketelitian seperti akuntansi atau administrasi. Orang wuku ini biasanya teratur dan disiplin.",
-    "Warigalit": "Wuku Warigalit baik untuk kegiatan spiritual dan meditasi. Cocok untuk retreat atau pencarian jati diri. Orang wuku ini biasanya memiliki sisi spiritual yang kuat.",
-    "Wariagung": "Wuku Wariagung cocok untuk acara besar dan perayaan. Baik untuk pernikahan, khitanan, atau hajatan lainnya. Orang wuku ini biasanya suka merayakan sesuatu.",
-    "Julungwangi": "Wuku Julungwangi baik untuk seni dan kreativitas. Cocok untuk melukis, menulis, atau bermusik. Orang wuku ini biasanya artistik dan imajinatif.",
-    "Sungsang": "Wuku Sungsang cocok untuk perubahan dan transformasi. Baik untuk pindah rumah, ganti pekerjaan, atau memulai babak baru. Orang wuku ini biasanya mudah beradaptasi.",
-    "Galungan": "Wuku Galungan baik untuk kegiatan keagamaan dan ritual. Cocok untuk upacara adat atau kegiatan spiritual. Orang wuku ini biasanya religius.",
-    "Kuningan": "Wuku Kuningan cocok untuk refleksi dan evaluasi. Baik untuk mengevaluasi hasil kerja atau introspeksi diri. Orang wuku ini biasanya bijaksana.",
-    "Langkir": "Wuku Langkir baik untuk petualangan dan eksplorasi. Cocok untuk traveling atau mencoba hal baru. Orang wuku ini biasanya berani mengambil risiko.",
-    "Mandasiya": "Wuku Mandasiya cocok untuk penyembuhan dan kesehatan. Baik untuk memulai pola hidup sehat atau pengobatan. Orang wuku ini biasanya peduli kesehatan.",
-    "Julungpujut": "Wuku Julungpujut baik untuk pendidikan tinggi dan penelitian. Cocok untuk S2/S3 atau penelitian ilmiah. Orang wuku ini biasanya akademis.",
-    "Pahang": "Wuku Pahang cocok untuk bisnis dan perdagangan. Baik untuk memulai usaha dagang atau investasi. Orang wuku ini biasanya jeli melihat peluang.",
-    "Kuruwelut": "Wuku Kuruwelut baik untuk kerajinan tangan dan keterampilan. Cocok untuk membuat kerajinan atau reparasi. Orang wuku ini biasanya kreatif.",
-    "Marakeh": "Wuku Marakeh cocok untuk pertanian dan perkebunan. Baik untuk bercocok tanam atau beternak. Orang wuku ini biasanya dekat dengan alam.",
-    "Tambir": "Wuku Tambir baik untuk komunikasi dan negosiasi. Cocok untuk marketing, sales, atau diplomat. Orang wuku ini biasanya persuasif.",
-    "Medangkungan": "Wuku Medangkungan cocok untuk olahraga dan kompetisi. Baik untuk turnamen atau lomba. Orang wuku ini biasanya kompetitif.",
-    "Maktal": "Wuku Maktal baik untuk planning dan strategi. Cocok untuk manajemen proyek atau perencanaan bisnis. Orang wuku ini biasanya visioner.",
-    "Wuye": "Wuku Wuye cocok untuk keluarga dan rumah tangga. Baik untuk memperkuat hubungan keluarga atau membangun rumah. Orang wuku ini biasanya family-oriented.",
-    "Manahil": "Wuku Manahil baik untuk spiritualitas dan meditasi. Cocok untuk yoga atau retreat spiritual. Orang wuku ini biasanya kontemplatif.",
-    "Prangbakat": "Wuku Prangbakat cocok untuk perlindungan dan keamanan. Baik untuk memasang sistem keamanan atau proteksi. Orang wuku ini biasanya protektif.",
-    "Bala": "Wuku Bala baik untuk kekuatan dan daya tahan. Cocok untuk fitness atau latihan fisik. Orang wuku ini biasanya kuat.",
-    "Wugu": "Wuku Wugu cocok untuk kebahagiaan dan kesenangan. Baik untuk rekreasi atau hiburan. Orang wuku ini biasanya optimis.",
-    "Wayang": "Wuku Wayang baik untuk seni pertunjukan. Cocok untuk teater, film, atau pertunjukan. Orang wuku ini biasanya ekspresif.",
-    "Kulawu": "Wuku Kulawu cocok untuk tradisi dan adat. Baik untuk melestarikan budaya atau adat istiadat. Orang wuku ini biasanya tradisional.",
-    "Dukut": "Wuku Dukut baik untuk kedalaman dan misteri. Cocok untuk penelitian sejarah atau arkeologi. Orang wuku ini biasanya penuh misteri.",
-    "Watugunung": "Wuku Watugunung cocok untuk penyelesaian dan akhir. Baik untuk menyelesaikan proyek atau menutup suatu babak. Orang wuku ini biasanya completionist."
-};
+// ==========================================
+// DATA WUKU EKSTERNAL (di-load dari file data-wuku.js)
+// ==========================================
+let DATA_WUKU = {}; // Akan diisi dari file eksternal
+
+// Fungsi untuk memuat data wuku dari file eksternal
+function loadWukuData() {
+    // Buat elemen script untuk memuat data wuku
+    const script = document.createElement('script');
+    script.src = 'data-wuku.js';
+    script.onload = function() {
+        console.log('Data Wuku berhasil dimuat dari file eksternal');
+        // DATA_WUKU sekarang sudah terisi dari file eksternal
+        
+        // Jika ada tanggal yang sedang dipilih, refresh detail
+        const savedToken = localStorage.getItem('kalender_token_tius');
+        if (savedToken && checkTokenLogic(savedToken)) {
+            const selectedDay = document.querySelector('.selected-day');
+            if (selectedDay) {
+                const date = new Date(current.getFullYear(), current.getMonth(), 
+                    parseInt(selectedDay.querySelector('.date-num').textContent));
+                updateDetail(date, getPasaran(date));
+            }
+        }
+    };
+    script.onerror = function() {
+        console.error('Gagal memuat data wuku dari file eksternal');
+        // Fallback ke data default jika gagal
+        DATA_WUKU = {
+            "Sinta": "Detail wuku tidak tersedia karena data eksternal gagal dimuat.",
+            "Landep": "Detail wuku tidak tersedia karena data eksternal gagal dimuat.",
+            // ... dan seterusnya untuk wuku lainnya
+        };
+    };
+    
+    document.head.appendChild(script);
+}
+
+// Panggil fungsi untuk memuat data wuku saat inisialisasi
+document.addEventListener("DOMContentLoaded", () => {
+    // Muat data wuku dari file eksternal
+    loadWukuData();
+    
+    generateCalendar();
+    
+    const savedToken = localStorage.getItem('kalender_token_tius');
+    if (savedToken && checkTokenLogic(savedToken)) {
+        updateDetail(TODAY, getPasaran(TODAY));
+    } else {
+        // Tampilkan info bahwa token dibutuhkan
+        const detailDiv = document.getElementById('detail');
+        if (detailDiv) {
+            detailDiv.innerHTML = `
+                <div style="text-align:center; padding:40px 20px; background:#f8f9fa; border-radius:12px; border:2px dashed #ddd;">
+                    <h3 style="color:#D30000; margin-top:0;">🔐 Akses Premium</h3>
+                    <p style="margin-bottom:20px;">Untuk melihat detail lengkap weton, Anda perlu mengaktifkan token.</p>
+                    <button onclick="showTokenModal()" style="
+                        background:#D30000; 
+                        color:white; 
+                        border:none; 
+                        padding:12px 30px; 
+                        border-radius:8px; 
+                        font-weight:bold; 
+                        cursor:pointer;
+                        font-size:1em;
+                    ">
+                        🔑 Aktifkan Token
+                    </button>
+                    <p style="margin-top:20px; color:#666; font-size:0.9em;">
+                        Klik tanggal di kalender untuk mulai menggunakan.
+                    </p>
+                </div>
+            `;
+        }
+    }
+
+    const prev = document.getElementById('prevMonth');
+    const next = document.getElementById('nextMonth');
+    
+    if(prev) prev.onclick = () => { 
+        current.setMonth(current.getMonth() - 1); 
+        generateCalendar(); 
+    };
+    if(next) next.onclick = () => { 
+        current.setMonth(current.getMonth() + 1); 
+        generateCalendar(); 
+    };
+});
 
 // DATA SRI JATI LENGKAP
 const TABEL_SRIJATI = {
@@ -929,7 +984,7 @@ function updateDetail(date, pasaran) {
         const namaBulanMasehi = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
         const tglMasehiLengkap = `${date.getDate()} ${namaBulanMasehi[date.getMonth()]} ${date.getFullYear()}`;
 
-        const teksWuku = DATA_WUKU[wukuName] || "Detail wuku belum tersedia.";
+        const teksWuku = (DATA_WUKU && DATA_WUKU[wukuName]) ? DATA_WUKU[wukuName] : "Detail wuku sedang dimuat...";
         const dataSriJati = TABEL_SRIJATI[neptu] || [];
 
         const isNaas = infoJawa.bulan.naas.includes(infoJawa.tanggal);
