@@ -768,7 +768,7 @@ function showTokenModal() {
                     <p>WhatsApp: <a href="https://wa.me/6285117021168?text=Halo%20admin,%20saya%20ingin%20membeli%20token%20Kalender%20Jawa" 
                                    target="_blank" 
                                    style="color: #25D366; font-weight: bold;">
-                        0812-3456-7890
+                        0851-1702-1168
                     </a></p>
                     <p style="font-size: 0.9em; color: #666; margin-bottom: 0;">
                         Token contoh: <code>DEMO123</code> (berlaku hingga 1 Maret 2026)
