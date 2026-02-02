@@ -1,4 +1,4 @@
-8888/**
+/**
  * KALENDER JAWA MODERN - VERSI FINAL FIX 2026
  * Update: Windu Sancaya, Tahun Jawa (Filosofi), & Konzili
  */
@@ -457,7 +457,7 @@ const TABEL_SRIJATI = {
      { usia: "91-96 tahun", nilai: 2, fase: "Masa Persiapan Pensiun" },
     ],
     17: [
-        { usia: "0-6 tahun", nilai: 1 fase: "Masa Kanak-kanak" },
+        { usia: "0-6 tahun", nilai: 1, fase: "Masa Kanak-kanak" },
         { usia: "7-12 tahun", nilai: 1, fase: "Masa Remaja" },
         { usia: "13-18 tahun", nilai: 0, fase: "Masa Awal Dewasa" },
         { usia: "19-24 tahun", nilai: 5, fase: "Masa Produktif" },
