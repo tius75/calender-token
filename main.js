@@ -1,4 +1,4 @@
-/**
+88/**
  * KALENDER JAWA MODERN - VERSI FINAL FIX 2026
  * Update: Windu Sancaya, Tahun Jawa (Filosofi), & Konzili
  */
@@ -558,22 +558,27 @@ function generateCalendar() {
 // LOGIKA TOKEN (TAMBAHKAN INI AGAR TIDAK ERROR)
 // ==========================================
 
-// Fungsi untuk mengecek apakah token valid
+// Fungsi untuk mengecek token secara dinamis
 function checkTokenLogic(token) {
-    // Ganti 'TIUS2026' dengan token yang Anda inginkan
-    const TOKEN_RAHASIA = "TIUS2026"; 
-    return token === TOKEN_RAHASIA;
+    // Mengambil token yang sah dari localStorage (yang diset oleh admin)
+    const tokenSah = localStorage.getItem('token_aktif_tius');
+    
+    // Jika admin belum buat token, kasih token default 'TIUS2026'
+    if (!tokenSah) {
+        return token === "TIUS2026";
+    }
+    
+    return token === tokenSah;
 }
 
-// Fungsi untuk menampilkan input token jika belum ada/salah
 function showTokenModal() {
-    const userInput = prompt("Masukkan Token Akses untuk melihat detail:");
-    const TOKEN_RAHASIA = "TIUS2026"; // Harus sama dengan di atas
+    const userInput = prompt("Masukkan Token Akses:");
+    if (userInput === null) return; // Jika user klik cancel
 
-    if (userInput === TOKEN_RAHASIA) {
+    if (checkTokenLogic(userInput)) {
         localStorage.setItem('kalender_token_tius', userInput);
         alert("Token Berhasil! Silakan klik tanggal kembali.");
-        location.reload(); // Muat ulang agar status token terbaca
+        location.reload();
     } else {
         alert("Token Salah atau Dibatalkan!");
     }
