@@ -1,4 +1,4 @@
-8/**
+/**
  * KALENDER JAWA MODERN - VERSI FINAL FIX 2026
  * Update: Windu Sancaya, Tahun Jawa (Filosofi), & Konzili
  */
@@ -137,7 +137,7 @@ const DATA_SIKLUS_TAHUN = [
     { 
         nama: "Wawu", 
         makna: "Marang (Arah/Tujuan)", 
-        deskripsi: "Melambangkan fokus. Menjelang akhir siklus, manusia diingatkan untuk kembali fokus pada tujuan akhir hidup agar tidak tersesat. Tahun Wawu adalah tahun penentuan arah dan prioritas hidup." 
+        deskripsi: "Melambangkan fokus. Menjelang akhir siklus, manusia diingatkan untuk kembali focus pada tujuan akhir hidup agar tidak tersesat. Tahun Wawu adalah tahun penentuan arah dan prioritas hidup." 
     },
     { 
         nama: "Jimakir", 
@@ -265,93 +265,9 @@ const DATA_WATAK_NEPTU = {
 };
 
 // ==========================================
-// DATA WUKU EKSTERNAL (di-load dari file data-wuku.js)
+// DATA WUKU EKSTERNAL
 // ==========================================
 let DATA_WUKU = {}; // Akan diisi dari file eksternal
-
-// Fungsi untuk memuat data wuku dari file eksternal
-function loadWukuData() {
-    // Buat elemen script untuk memuat data wuku
-    const script = document.createElement('script');
-    script.src = 'data-wuku.js';
-    script.onload = function() {
-        console.log('Data Wuku berhasil dimuat dari file eksternal');
-        // DATA_WUKU sekarang sudah terisi dari file eksternal
-        
-        // Jika ada tanggal yang sedang dipilih, refresh detail
-        const savedToken = localStorage.getItem('kalender_token_tius');
-        if (savedToken && checkTokenLogic(savedToken)) {
-            const selectedDay = document.querySelector('.selected-day');
-            if (selectedDay) {
-                const date = new Date(current.getFullYear(), current.getMonth(), 
-                    parseInt(selectedDay.querySelector('.date-num').textContent));
-                updateDetail(date, getPasaran(date));
-            }
-        }
-    };
-    script.onerror = function() {
-        console.error('Gagal memuat data wuku dari file eksternal');
-        // Fallback ke data default jika gagal
-        DATA_WUKU = {
-            "Sinta": "Detail wuku tidak tersedia karena data eksternal gagal dimuat.",
-            "Landep": "Detail wuku tidak tersedia karena data eksternal gagal dimuat.",
-            // ... dan seterusnya untuk wuku lainnya
-        };
-    };
-    
-    document.head.appendChild(script);
-}
-
-// Panggil fungsi untuk memuat data wuku saat inisialisasi
-document.addEventListener("DOMContentLoaded", () => {
-    // Muat data wuku dari file eksternal
-    loadWukuData();
-    
-    generateCalendar();
-    
-    const savedToken = localStorage.getItem('kalender_token_tius');
-    if (savedToken && checkTokenLogic(savedToken)) {
-        updateDetail(TODAY, getPasaran(TODAY));
-    } else {
-        // Tampilkan info bahwa token dibutuhkan
-        const detailDiv = document.getElementById('detail');
-        if (detailDiv) {
-            detailDiv.innerHTML = `
-                <div style="text-align:center; padding:40px 20px; background:#f8f9fa; border-radius:12px; border:2px dashed #ddd;">
-                    <h3 style="color:#D30000; margin-top:0;">🔐 Akses Premium</h3>
-                    <p style="margin-bottom:20px;">Untuk melihat detail lengkap weton, Anda perlu mengaktifkan token.</p>
-                    <button onclick="showTokenModal()" style="
-                        background:#D30000; 
-                        color:white; 
-                        border:none; 
-                        padding:12px 30px; 
-                        border-radius:8px; 
-                        font-weight:bold; 
-                        cursor:pointer;
-                        font-size:1em;
-                    ">
-                        🔑 Aktifkan Token
-                    </button>
-                    <p style="margin-top:20px; color:#666; font-size:0.9em;">
-                        Klik tanggal di kalender untuk mulai menggunakan.
-                    </p>
-                </div>
-            `;
-        }
-    }
-
-    const prev = document.getElementById('prevMonth');
-    const next = document.getElementById('nextMonth');
-    
-    if(prev) prev.onclick = () => { 
-        current.setMonth(current.getMonth() - 1); 
-        generateCalendar(); 
-    };
-    if(next) next.onclick = () => { 
-        current.setMonth(current.getMonth() + 1); 
-        generateCalendar(); 
-    };
-});
 
 // DATA SRI JATI LENGKAP
 const TABEL_SRIJATI = {
@@ -731,6 +647,43 @@ function hitungUsiaLengkap(birthDate) {
 }
 
 // ==========================================
+// SISTEM LOAD DATA WUKU DARI EKSTERNAL
+// ==========================================
+
+// Fungsi untuk memuat data wuku dari file eksternal
+function loadWukuData() {
+    return new Promise((resolve, reject) => {
+        // Cek apakah data sudah ada di window (jika file sudah dimuat sebelumnya)
+        if (window.DATA_WUKU && Object.keys(window.DATA_WUKU).length > 0) {
+            DATA_WUKU = window.DATA_WUKU;
+            console.log('Data Wuku ditemukan di window.DATA_WUKU');
+            resolve(DATA_WUKU);
+            return;
+        }
+        
+        // Jika belum ada, load file eksternal
+        const script = document.createElement('script');
+        script.src = 'data-wuku.js?v=' + Date.now(); // Cache buster
+        script.onload = function() {
+            if (window.DATA_WUKU) {
+                DATA_WUKU = window.DATA_WUKU;
+                console.log('Data Wuku berhasil dimuat dari file eksternal:', Object.keys(DATA_WUKU).length, 'wuku');
+                resolve(DATA_WUKU);
+            } else {
+                console.error('Data Wuku tidak ditemukan setelah script dimuat');
+                reject(new Error('Data Wuku tidak ditemukan'));
+            }
+        };
+        script.onerror = function() {
+            console.error('Gagal memuat file data-wuku.js');
+            reject(new Error('Gagal memuat file data-wuku.js'));
+        };
+        
+        document.head.appendChild(script);
+    });
+}
+
+// ==========================================
 // MODAL TOKEN YANG DIPERBAIKI
 // ==========================================
 
@@ -951,7 +904,7 @@ function generateCalendar() {
 // UPDATE DETAIL LENGKAP
 // ==========================================
 
-function updateDetail(date, pasaran) {
+async function updateDetail(date, pasaran) {
     try {
         const detailDiv = document.getElementById('detail');
         if (!detailDiv) {
@@ -984,7 +937,25 @@ function updateDetail(date, pasaran) {
         const namaBulanMasehi = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
         const tglMasehiLengkap = `${date.getDate()} ${namaBulanMasehi[date.getMonth()]} ${date.getFullYear()}`;
 
-        const teksWuku = (DATA_WUKU && DATA_WUKU[wukuName]) ? DATA_WUKU[wukuName] : "Detail wuku sedang dimuat...";
+        // Ambil data wuku dari file eksternal
+        let teksWuku = "Detail wuku sedang dimuat...";
+        try {
+            // Cek apakah data wuku sudah dimuat
+            if (Object.keys(DATA_WUKU).length === 0) {
+                // Jika belum, tunggu sampai dimuat
+                await loadWukuData();
+            }
+            
+            if (DATA_WUKU[wukuName]) {
+                teksWuku = DATA_WUKU[wukuName];
+            } else {
+                teksWuku = `Data untuk wuku ${wukuName} tidak ditemukan.`;
+            }
+        } catch (error) {
+            console.error('Error loading wuku data:', error);
+            teksWuku = `Gagal memuat data wuku ${wukuName}.`;
+        }
+        
         const dataSriJati = TABEL_SRIJATI[neptu] || [];
 
         const isNaas = infoJawa.bulan.naas.includes(infoJawa.tanggal);
@@ -1162,14 +1133,14 @@ function updateDetail(date, pasaran) {
                 <!-- Analisis Wuku -->
                 <div style="margin-bottom:20px; padding:20px; border:1px solid #d1c4e9; border-radius:10px; background:#f5f2ff;">
                     <h3 style="color:#5e35b1; margin-top:0; border-bottom:2px solid #b39ddb; padding-bottom:8px;">🛡️ Analisis Wuku ${wukuName}</h3>
-                    <p style="font-size:0.95rem; line-height:1.6; margin:10px 0 0;">${teksWuku}</p>
+                    <div style="font-size:0.95rem; line-height:1.6; margin:10px 0 0;">${teksWuku}</div>
                 </div>
                 
                 <!-- Siklus Sri Jati -->
                 <div style="margin-bottom:10px;">
                     <h3 style="color:#D30000; margin-top:0; border-bottom:2px solid #ffcccc; padding-bottom:8px;">📈 Siklus Sri Jati (Rejeki & Nasib)</h3>
                     <p style="font-size:0.9rem; color:#666; margin-bottom:15px;">Berikut adalah perjalanan rejeki dan nasib berdasarkan neptu ${neptu}:</p>
-                    ${dataSriJati.length > 0 ? tabelHtml : "<p style='color:#999; padding:20px; text-align:center; background:#f9f9f9; border-radius:8px;'>Data siklus Sri Jati untuk neptu ${neptu} tidak tersedia</p>"}
+                    ${dataSriJati.length > 0 ? tabelHtml : `<p style='color:#999; padding:20px; text-align:center; background:#f9f9f9; border-radius:8px;'>Data siklus Sri Jati untuk neptu ${neptu} tidak tersedia</p>`}
                 </div>
                 
                 <!-- Deskripsi Siklus Tahun -->
@@ -1276,7 +1247,14 @@ function searchWeton() {
 // INITIAL START
 // ==========================================
 
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", async () => {
+    // Preload data wuku di background
+    loadWukuData().then(() => {
+        console.log('Data Wuku siap digunakan');
+    }).catch(error => {
+        console.error('Gagal memuat data wuku:', error);
+    });
+    
     generateCalendar();
     
     const savedToken = localStorage.getItem('kalender_token_tius');
