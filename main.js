@@ -610,7 +610,7 @@ function showTokenModal() {
         location.reload(); 
     } else {
         alert("Token SALAH atau sudah EXPIRED!\nSilakan hubungi admin untuk pembelian token baru.");
-    }
+    
 }
 // ==========================================
 // INITIAL START
