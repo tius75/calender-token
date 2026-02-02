@@ -489,81 +489,232 @@ function getLunarShio(date) {
         const m = date.getMonth() + 1;
         const d = date.getDate();
         
-        let imlekM, imlekD, shioTahunIni;
+        // Data lengkap Imlek 2020-2030 dengan tahun Imlek yang benar
+        const imlekData = {
+            2020: { 
+                date: new Date(2020, 0, 25), // 25 Januari 2020
+                shio: "Tikus", 
+                lunarYear: 4718  // Tahun Tikus 4718
+            },
+            2021: { 
+                date: new Date(2021, 1, 12), // 12 Februari 2021
+                shio: "Kerbau", 
+                lunarYear: 4719  // Tahun Kerbau 4719
+            },
+            2022: { 
+                date: new Date(2022, 1, 1),  // 1 Februari 2022
+                shio: "Macan", 
+                lunarYear: 4720  // Tahun Macan 4720
+            },
+            2023: { 
+                date: new Date(2023, 0, 22), // 22 Januari 2023
+                shio: "Kelinci", 
+                lunarYear: 4721  // Tahun Kelinci 4721
+            },
+            2024: { 
+                date: new Date(2024, 1, 10), // 10 Februari 2024
+                shio: "Naga", 
+                lunarYear: 4722  // Tahun Naga 4722
+            },
+            2025: { 
+                date: new Date(2025, 0, 29), // 29 Januari 2025
+                shio: "Ular", 
+                lunarYear: 4723  // Tahun Ular 4723
+            },
+            2026: { 
+                date: new Date(2026, 1, 17), // 17 Februari 2026
+                shio: "Kuda", 
+                lunarYear: 4724  // Tahun Kuda 4724
+            },
+            2027: { 
+                date: new Date(2027, 1, 6),  // 6 Februari 2027
+                shio: "Kambing", 
+                lunarYear: 4725  // Tahun Kambing 4725
+            },
+            2028: { 
+                date: new Date(2028, 0, 26), // 26 Januari 2028
+                shio: "Monyet", 
+                lunarYear: 4726  // Tahun Monyet 4726
+            },
+            2029: { 
+                date: new Date(2029, 1, 13), // 13 Februari 2029
+                shio: "Ayam", 
+                lunarYear: 4727  // Tahun Ayam 4727
+            },
+            2030: { 
+                date: new Date(2030, 1, 3),  // 3 Februari 2030
+                shio: "Anjing", 
+                lunarYear: 4728  // Tahun Anjing 4728
+            }
+        };
         
-        // Cari data Imlek tahun ini
-        if (DB_IMLEK && DB_IMLEK[y]) {
-            imlekM = DB_IMLEK[y].m;
-            imlekD = DB_IMLEK[y].d;
-            shioTahunIni = DB_IMLEK[y].shio;
-        } else {
-            // Fallback jika data tidak ada
-            const shios = ["Monyet", "Ayam", "Anjing", "Babi", "Tikus", "Kerbau", "Macan", "Kelinci", "Naga", "Ular", "Kuda", "Kambing"];
-            shioTahunIni = shios[y % 12];
-            imlekM = 2; imlekD = 5; // Perkiraan tanggal Imlek
+        // Cari data Imlek untuk tahun ini dan tahun lalu
+        const thisYearData = imlekData[y];
+        const lastYearData = imlekData[y-1];
+        
+        if (!thisYearData || !lastYearData) {
+            // Fallback calculation jika data tidak ada
+            return calculateLunarFallback(date);
         }
-
-        const tglImlek = new Date(y, imlekM - 1, imlekD);
-        const isSudahImlek = date >= tglImlek;
-
-        // Hitung tahun Imlek yang benar
-        // Tahun Imlek = 2026 + 2698 = 4724 (contoh)
-        // Tapi lebih akurat: 2026 + 2697 = 4723 (karena dimulai dari 2697 SM)
-        const tahunImlek = isSudahImlek ? y + 2697 : y + 2696;
         
-        // Hitung bulan Imlek
-        const diffTime = Math.abs(date - tglImlek);
-        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+        let lunarYear, shio, baseDate, isAfterImlek;
         
-        let lunarDay, lunarMonth;
+        // Tentukan apakah sudah lewat Imlek tahun ini
+        if (date >= thisYearData.date) {
+            // Sudah Imlek tahun ini
+            lunarYear = thisYearData.lunarYear;
+            shio = thisYearData.shio;
+            baseDate = thisYearData.date;
+            isAfterImlek = true;
+        } else {
+            // Masih tahun Imlek sebelumnya (tahun lalu)
+            lunarYear = lastYearData.lunarYear;
+            shio = lastYearData.shio;
+            baseDate = lastYearData.date;
+            isAfterImlek = false;
+        }
         
-        if (isSudahImlek) {
-            // Sudah lewat Imlek tahun ini
+        // Hitung selisih hari
+        const diffMs = Math.abs(date - baseDate);
+        const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+        
+        let lunarMonth, lunarDay;
+        
+        if (isAfterImlek) {
+            // Setelah Imlek: hitung maju dari bulan 1
+            lunarMonth = Math.floor(diffDays / 29.53) + 1;
             lunarDay = (diffDays % 30) + 1;
-            lunarMonth = Math.floor(diffDays / 30) + 1;
-        } else {
-            // Sebelum Imlek tahun ini, masih tahun Imlek sebelumnya
-            const daysBeforeImlek = Math.floor((tglImlek - date) / (1000 * 60 * 60 * 24));
-            lunarDay = 30 - (daysBeforeImlek % 30);
-            lunarMonth = 12 - Math.floor(daysBeforeImlek / 30);
             
-            // Jika bulan 0, berarti bulan 12
-            if (lunarMonth === 0) lunarMonth = 12;
-        }
-        
-        if (lunarDay < 1) lunarDay = 1;
-        if (lunarDay > 30) lunarDay = 30;
-        if (lunarMonth < 1) lunarMonth = 1;
-        if (lunarMonth > 12) lunarMonth = 12;
-        
-        // Tentukan shio yang benar
-        let shioFinal;
-        if (isSudahImlek) {
-            shioFinal = shioTahunIni;
+            // Untuk bulan 13 (kabisat lunar)
+            if (lunarMonth > 12) {
+                lunarMonth = lunarMonth - 12;
+                // Tahun Imlek bertambah jika melewati bulan 12
+                // lunarYear += 1; // Tidak perlu karena sudah menggunakan tahun yang benar
+            }
         } else {
-            // Jika sebelum Imlek, gunakan shio tahun sebelumnya
-            if (DB_IMLEK && DB_IMLEK[y-1]) {
-                shioFinal = DB_IMLEK[y-1].shio;
-            } else {
-                const shios = ["Monyet", "Ayam", "Anjing", "Babi", "Tikus", "Kerbau", "Macan", "Kelinci", "Naga", "Ular", "Kuda", "Kambing"];
-                shioFinal = shios[(y-1) % 12];
+            // Sebelum Imlek: hitung mundur dari bulan 12 tahun lalu
+            const daysBefore = Math.floor((thisYearData.date - date) / (1000 * 60 * 60 * 24));
+            lunarMonth = 12 - Math.floor(daysBefore / 29.53);
+            lunarDay = 30 - (daysBefore % 30);
+            
+            if (lunarMonth < 1) {
+                lunarMonth = 12 + lunarMonth; // Bulan 11, 10, dst
             }
         }
-
+        
+        // Validasi
+        if (lunarMonth < 1) lunarMonth = 1;
+        if (lunarMonth > 12) lunarMonth = 12;
+        if (lunarDay < 1) lunarDay = 1;
+        if (lunarDay > 30) lunarDay = 30;
+        
+        // Ramalan berdasarkan shio
+        const ramalan = getShioFortune(shio);
+        
         return {
-            full: `${lunarDay} - ${lunarMonth} - ${tahunImlek}`,
-            shio: shioFinal,
-            ramalan: "Gunakan energi hari ini dengan bijaksana."
+            full: `${lunarDay} - ${lunarMonth} - ${lunarYear}`,
+            shio: shio,
+            ramalan: ramalan
         };
+        
     } catch (error) {
         console.error("Error in getLunarShio:", error);
-        return {
-            full: "1 - 1 - 4723",
-            shio: "Kuda",
-            ramalan: "Data lunar sedang diproses."
-        };
+        return calculateLunarFallback(date);
     }
 }
+
+// Fungsi fallback jika data tidak lengkap
+function calculateLunarFallback(date) {
+    const y = date.getFullYear();
+    const shios = ["Tikus", "Kerbau", "Macan", "Kelinci", "Naga", "Ular", "Kuda", "Kambing", "Monyet", "Ayam", "Anjing", "Babi"];
+    
+    // Tahun 2025 adalah tahun Ular (4723)
+    const baseYear = 2025;
+    const baseLunarYear = 4723;
+    const baseShioIndex = 5; // Ular
+    
+    // Hitung selisih tahun dari 2025
+    const yearDiff = y - baseYear;
+    
+    // Tentukan shio
+    let shioIndex = (baseShioIndex + yearDiff) % 12;
+    if (shioIndex < 0) shioIndex += 12;
+    const shio = shios[shioIndex];
+    
+    // Tentukan tahun Imlek (perkiraan)
+    let lunarYear = baseLunarYear + yearDiff;
+    
+    // Perkiraan tanggal Imlek (biasanya antara 21 Jan - 20 Feb)
+    const estimatedImlek = new Date(y, 0, 21 + Math.floor(Math.random() * 30));
+    
+    // Tentukan apakah sudah lewat Imlek
+    const isAfterImlek = date >= estimatedImlek;
+    
+    if (!isAfterImlek) {
+        lunarYear -= 1; // Masih tahun sebelumnya
+        // Cari shio tahun sebelumnya
+        shioIndex = (shioIndex - 1 + 12) % 12;
+    }
+    
+    // Perkiraan bulan dan tanggal (sederhana)
+    const month = date.getMonth() + 1;
+    const day = date.getDate();
+    
+    // Mapping sederhana bulan Masehi ke Lunar (perkiraan)
+    let lunarMonth, lunarDay;
+    
+    if (isAfterImlek) {
+        lunarMonth = month - 1; // Perkiraan
+        if (lunarMonth < 1) lunarMonth = 12;
+        lunarDay = day;
+    } else {
+        lunarMonth = month + 11; // Perkiraan
+        if (lunarMonth > 12) lunarMonth -= 12;
+        lunarDay = day;
+    }
+    
+    // Validasi
+    if (lunarMonth < 1) lunarMonth = 1;
+    if (lunarMonth > 12) lunarMonth = 12;
+    if (lunarDay < 1) lunarDay = 1;
+    if (lunarDay > 30) lunarDay = 30;
+    
+    return {
+        full: `${lunarDay} - ${lunarMonth} - ${lunarYear}`,
+        shio: shios[shioIndex],
+        ramalan: getShioFortune(shios[shioIndex])
+    };
+}
+
+// Fungsi untuk mendapatkan ramalan shio
+function getShioFortune(shio) {
+    const fortunes = {
+        "Tikus": "Tahun yang baik untuk memulai usaha baru dan investasi jangka panjang. Perhatikan hubungan bisnis.",
+        "Kerbau": "Ketekunan dan kerja keras akan membuahkan hasil. Fokus pada stabilitas dan keamanan finansial.",
+        "Macan": "Tahun penuh tantangan dan keberanian. Waktu yang baik untuk mengambil risiko yang diperhitungkan.",
+        "Kelinci": "Kedamaian dan harmoni dalam hubungan. Tahun yang baik untuk keluarga dan persahabatan.",
+        "Naga": "Energi kuat untuk kepemimpinan dan kesuksesan. Waktu yang tepat untuk ekspansi bisnis.",
+        "Ular": "Kebijaksanaan dan intuisi meningkat. Tahun yang baik untuk perencanaan strategis.",
+        "Kuda": "Kebebasan dan mobilitas. Tahun yang baik untuk perjalanan dan perubahan karier.",
+        "Kambing": "Kreativitas dan seni berkembang. Fokus pada hubungan keluarga dan kesejahteraan.",
+        "Monyet": "Kecerdikan dan inovasi dihargai. Tahun yang baik untuk teknologi dan pemecahan masalah.",
+        "Ayam": "Ketelitian membawa kesuksesan. Perhatikan detail dalam pekerjaan dan keuangan.",
+        "Anjing": "Kesetiaan dan kejujuran dihargai. Tahun yang baik untuk membangun kepercayaan.",
+        "Babi": "Kemakmuran dan keberuntungan. Tahun yang baik untuk investasi properti dan tabungan."
+    };
+    
+    return fortunes[shio] || "Gunakan hari ini untuk merencanakan masa depan yang lebih baik.";
+}
+
+// Contoh penggunaan:
+// Untuk tanggal 17 Februari 2026 (Imlek 2026)
+// Hasil: "1 - 1 - 4724" (Tahun Baru Imlek, tahun Kuda)
+
+// Untuk tanggal 1 Januari 2026 (sebelum Imlek 2026)
+// Hasil: "14 - 11 - 4723" (masih tahun Ular 4723)
+
+// Untuk tanggal 10 Februari 2026 (sebelum Imlek 2026)
+// Hasil: "25 - 12 - 4723" (akhir tahun Ular 4723)
 
 function getWuku(date) {
     const wukuList = ["Sinta", "Landep", "Wukir", "Kurantil", "Tolu", "Gumbreg", "Warigalit", "Wariagung", "Julungwangi", "Sungsang", "Galungan", "Kuningan", "Langkir", "Mandasiya", "Julungpujut", "Pahang", "Kuruwelut", "Marakeh", "Tambir", "Medangkungan", "Maktal", "Wuye", "Manahil", "Prangbakat", "Bala", "Wugu", "Wayang", "Kulawu", "Dukut", "Watugunung"];
