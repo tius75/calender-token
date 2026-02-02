@@ -500,3 +500,81 @@ function shareWhatsApp() {
     const text = document.getElementById('printableArea').innerText;
     window.open("https://wa.me/?text=" + encodeURIComponent(text), "_blank");
 }
+
+// ==========================================
+// RENDER UI KALENDER (FIXED)
+// ==========================================
+function generateCalendar() {
+    const grid = document.getElementById('calendar');
+    const mNav = document.getElementById('monthYearNav');
+    if (!grid) return;
+    
+    grid.innerHTML = '';
+    const y = current.getFullYear();
+    const m = current.getMonth();
+    const namaBulan = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
+    mNav.innerText = `${namaBulan[m]} ${y}`;
+
+    HARI.forEach((h, i) => {
+        const el = document.createElement('div');
+        el.innerText = h.substring(0, 3);
+        el.className = 'header-day' + (i === 0 ? ' sunday-red' : '');
+        grid.appendChild(el);
+    });
+
+    const firstDay = new Date(y, m, 1).getDay();
+    const daysInMonth = new Date(y, m + 1, 0).getDate();
+
+    for (let i = 0; i < firstDay; i++) grid.appendChild(document.createElement('div'));
+
+    for (let d = 1; d <= daysInMonth; d++) {
+        const dateObj = new Date(y, m, d);
+        const p = getPasaran(dateObj);
+        const cell = document.createElement('div');
+        cell.className = 'calendar-day';
+        
+        if (dateObj.getDay() === 0) cell.classList.add('sunday-red');
+        if (dateObj.toDateString() === TODAY.toDateString()) cell.classList.add('today-highlight');
+        
+        cell.innerHTML = `<div class="date-num">${d}</div><div class="pasaran-text">${p}</div>`;
+        
+        // FUNGSI ONCLICK DENGAN SISTEM TOKEN
+        cell.onclick = () => {
+            const savedToken = localStorage.getItem('kalender_token_tius');
+            
+            if (checkTokenLogic(savedToken)) {
+                document.querySelectorAll('.calendar-day').forEach(c => c.classList.remove('selected-day'));
+                cell.classList.add('selected-day');
+                updateDetail(dateObj, p);
+            } else {
+                showTokenModal();
+            }
+        };
+        grid.appendChild(cell);
+    }
+}
+
+// ==========================================
+// LOGIKA TOKEN (TAMBAHKAN INI AGAR TIDAK ERROR)
+// ==========================================
+
+// Fungsi untuk mengecek apakah token valid
+function checkTokenLogic(token) {
+    // Ganti 'TIUS2026' dengan token yang Anda inginkan
+    const TOKEN_RAHASIA = "TIUS2026"; 
+    return token === TOKEN_RAHASIA;
+}
+
+// Fungsi untuk menampilkan input token jika belum ada/salah
+function showTokenModal() {
+    const userInput = prompt("Masukkan Token Akses untuk melihat detail:");
+    const TOKEN_RAHASIA = "TIUS2026"; // Harus sama dengan di atas
+
+    if (userInput === TOKEN_RAHASIA) {
+        localStorage.setItem('kalender_token_tius', userInput);
+        alert("Token Berhasil! Silakan klik tanggal kembali.");
+        location.reload(); // Muat ulang agar status token terbaca
+    } else {
+        alert("Token Salah atau Dibatalkan!");
+    }
+}
