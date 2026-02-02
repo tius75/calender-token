@@ -1,4 +1,4 @@
-88/**
+/**
  * KALENDER JAWA MODERN - VERSI FINAL FIX 2026
  * Update: Windu Sancaya, Tahun Jawa (Filosofi), & Konzili
  */
@@ -308,14 +308,16 @@ function updateDetail(date, pasaran) {
 
     const h = HARI[date.getDay()];
     const wetonKey = `${h} ${pasaran}`;
-    const nHari = NEPTU_HARI[h];
-    const nPasaran = NEPTU_PASARAN[pasaran];
-    const neptu = nHari + nPasaran;
+    const neptu = NEPTU_HARI[h] + NEPTU_PASARAN[pasaran];
     
     const wukuName = getWuku(date);
     const infoJawa = getTanggalJawa(date); 
 
-    const siklusBesar = getSiklusBesar(date);
+    // --- PERBAIKAN DI SINI ---
+    // Jangan gunakan getSiklusBesar(date), tapi gunakan infoJawa.tahun
+    const siklusBesar = getSiklusBesar(infoJawa.tahun); 
+    // -------------------------
+
     const mangsa = getMangsaInfo(date);
     const zodiak = getZodiak(date);
     const lunar = getLunarShio(date);
