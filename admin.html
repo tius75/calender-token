@@ -2,40 +2,42 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <title>Admin Panel - Kalender Tius</title>
+    <title>Admin - Set Token Kalender</title>
     <style>
-        body { font-family: sans-serif; padding: 20px; background: #f4f4f4; }
-        .card { background: white; padding: 20px; border-radius: 8px; max-width: 400px; margin: auto; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
-        input { width: 100%; padding: 10px; margin: 10px 0; box-sizing: border-box; }
-        button { width: 100%; padding: 10px; background: #D30000; color: white; border: none; cursor: pointer; }
-        #panelAdmin { display: none; }
+        body { font-family: sans-serif; background: #f0f0f0; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
+        .admin-card { background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); width: 320px; text-align: center; }
+        input { width: 100%; padding: 12px; margin: 10px 0; border: 1px solid #ddd; border-radius: 6px; box-sizing: border-box; }
+        button { width: 100%; padding: 12px; background: #D30000; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; }
+        button:hover { background: #b30000; }
+        #panel { display: none; }
     </style>
 </head>
 <body>
 
-<div class="card" id="loginBox">
-    <h3>Login Admin</h3>
-    <input type="password" id="passAdmin" placeholder="Masukkan Password Admin">
-    <button onclick="loginAdmin()">Masuk</button>
-</div>
+    <div id="login" class="admin-card">
+        <h2>Admin Login</h2>
+        <input type="password" id="passAdmin" placeholder="Masukkan Password Admin">
+        <button onclick="login()">Masuk</button>
+    </div>
 
-<div class="card" id="panelAdmin">
-    <h3>Pengaturan Token</h3>
-    <p>Token Saat Ini: <b id="tokenSekarang">-</b></p>
-    <input type="text" id="newToken" placeholder="Masukkan Token Baru">
-    <button onclick="updateToken()">Update Token</button>
-    <br><br>
-    <button onclick="logout()" style="background:#666">Keluar</button>
-</div>
+    <div id="panel" class="admin-card">
+        <h2>Set Token Manual</h2>
+        <p>Token Aktif: <b id="tokenSekarang" style="color: #D30000;">-</b></p>
+        <input type="text" id="inputTokenBaru" placeholder="Ketik Token Baru (Contoh: TIUS99)">
+        <button onclick="updateToken()">Simpan Token Baru</button>
+        <hr>
+        <button onclick="location.reload()" style="background: #666;">Keluar</button>
+    </div>
 
 <script>
-    const PASS_RAHASIA = "admin123"; // Ganti password admin di sini
+    // GANTI PASSWORD ADMIN ANDA DI SINI
+    const PASSWORD_ADMIN = "tius123"; 
 
-    function loginAdmin() {
+    function login() {
         const input = document.getElementById('passAdmin').value;
-        if(input === PASS_RAHASIA) {
-            document.getElementById('loginBox').style.display = 'none';
-            document.getElementById('panelAdmin').style.display = 'block';
+        if(input === PASSWORD_ADMIN) {
+            document.getElementById('login').style.display = 'none';
+            document.getElementById('panel').style.display = 'block';
             tampilkanToken();
         } else {
             alert("Password Salah!");
@@ -43,21 +45,19 @@
     }
 
     function tampilkanToken() {
+        // Ambil token dari memori bersama (localStorage)
         const t = localStorage.getItem('token_aktif_tius') || "TIUS2026";
         document.getElementById('tokenSekarang').innerText = t;
     }
 
     function updateToken() {
-        const tokenBaru = document.getElementById('newToken').value;
-        if(tokenBaru.length < 3) return alert("Token terlalu pendek!");
+        const tkn = document.getElementById('inputTokenBaru').value;
+        if(tkn.trim() === "") return alert("Token tidak boleh kosong!");
         
-        localStorage.setItem('token_aktif_tius', tokenBaru);
-        alert("Token berhasil diperbarui menjadi: " + tokenBaru);
+        // Simpan token ke localStorage agar terbaca oleh main.js
+        localStorage.setItem('token_aktif_tius', tkn);
+        alert("Token berhasil diperbarui!");
         tampilkanToken();
-    }
-
-    function logout() {
-        location.reload();
     }
 </script>
 </body>
