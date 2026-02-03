@@ -1,7 +1,25 @@
 /**
  * KALENDER JAWA MODERN - VERSI FINAL FIX 2026
- * Update: Windu Sancaya, Tahun Jawa (Filosofi), & Konzili
+ * Dengan PWA Support dan Fitur Cari Tanggal
  */
+
+// PWA Detection and Setup
+console.log('Kalender Jawa PWA v2.0 dengan Fitur Cari Tanggal');
+
+// Check if running in standalone mode
+if (window.matchMedia('(display-mode: standalone)').matches) {
+    console.log('Running as PWA');
+    // Add standalone specific features
+    document.addEventListener('visibilitychange', function() {
+        if (!document.hidden) {
+            // App came to foreground
+            console.log('App resumed');
+        }
+    });
+}
+
+// Network status
+let isOnline = navigator.onLine;
 
 // ==========================================
 // SISTEM TOKEN - VERSI TUNGGAL
@@ -153,6 +171,86 @@ const WINDU_LIST = ["Kuntara", "Sangara", "Sancaya", "Adi"];
 // ==========================================
 
 const DB_IMLEK = {
+     1940: { m: 2, d: 8, shio: "Naga" },
+  1941: { m: 1, d: 27, shio: "Ular" },
+  1942: { m: 2, d: 15, shio: "Kuda" },
+  1943: { m: 2, d: 5, shio: "Kambing" },
+  1944: { m: 1, d: 25, shio: "Monyet" },
+  1945: { m: 2, d: 13, shio: "Ayam" },
+  1946: { m: 2, d: 2, shio: "Anjing" },
+  1947: { m: 1, d: 22, shio: "Babi" },
+  1948: { m: 2, d: 10, shio: "Tikus" },
+  1949: { m: 1, d: 29, shio: "Kerbau" },
+  1950: { m: 2, d: 17, shio: "Macan" },
+  1951: { m: 2, d: 6, shio: "Kelinci" },
+  1952: { m: 1, d: 27, shio: "Naga" },
+  1953: { m: 2, d: 14, shio: "Ular" },
+  1954: { m: 2, d: 3, shio: "Kuda" },
+  1955: { m: 1, d: 24, shio: "Kambing" },
+  1956: { m: 2, d: 12, shio: "Monyet" },
+  1957: { m: 1, d: 31, shio: "Ayam" },
+  1958: { m: 2, d: 18, shio: "Anjing" },
+  1959: { m: 2, d: 8, shio: "Babi" },
+  1960: { m: 1, d: 28, shio: "Tikus" },
+  1961: { m: 2, d: 15, shio: "Kerbau" },
+  1962: { m: 2, d: 5, shio: "Macan" },
+  1963: { m: 1, d: 25, shio: "Kelinci" },
+  1964: { m: 2, d: 13, shio: "Naga" },
+  1965: { m: 2, d: 2, shio: "Ular" },
+  1966: { m: 1, d: 21, shio: "Kuda" },
+  1967: { m: 2, d: 9, shio: "Kambing" },
+  1968: { m: 1, d: 30, shio: "Monyet" },
+  1969: { m: 2, d: 17, shio: "Ayam" },
+  1970: { m: 2, d: 6, shio: "Anjing" },
+  1971: { m: 1, d: 27, shio: "Babi" },
+  1972: { m: 2, d: 15, shio: "Tikus" },
+  1973: { m: 2, d: 3, shio: "Kerbau" },
+  1974: { m: 1, d: 23, shio: "Macan" },
+  1975: { m: 2, d: 11, shio: "Kelinci" },
+  1976: { m: 1, d: 31, shio: "Naga" },
+  1977: { m: 2, d: 18, shio: "Ular" },
+  1978: { m: 2, d: 7, shio: "Kuda" },
+  1979: { m: 1, d: 28, shio: "Kambing" },
+  1980: { m: 2, d: 16, shio: "Monyet" },
+  1981: { m: 2, d: 5, shio: "Ayam" },
+  1982: { m: 1, d: 25, shio: "Anjing" },
+  1983: { m: 2, d: 13, shio: "Babi" },
+  1984: { m: 2, d: 2, shio: "Tikus" },
+  1985: { m: 2, d: 20, shio: "Kerbau" },
+  1986: { m: 2, d: 9, shio: "Macan" },
+  1987: { m: 1, d: 29, shio: "Kelinci" },
+  1988: { m: 2, d: 17, shio: "Naga" },
+  1989: { m: 2, d: 6, shio: "Ular" },
+  1990: { m: 1, d: 27, shio: "Kuda" },
+  1991: { m: 2, d: 15, shio: "Kambing" },
+  1992: { m: 2, d: 4, shio: "Monyet" },
+  1993: { m: 1, d: 23, shio: "Ayam" },
+  1994: { m: 2, d: 10, shio: "Anjing" },
+  1995: { m: 1, d: 31, shio: "Babi" },
+  1996: { m: 2, d: 19, shio: "Tikus" },
+  1997: { m: 2, d: 7, shio: "Kerbau" },
+  1998: { m: 1, d: 28, shio: "Macan" },
+  1999: { m: 2, d: 16, shio: "Kelinci" },
+  2000: { m: 2, d: 5, shio: "Naga" },
+  2001: { m: 1, d: 24, shio: "Ular" },
+  2002: { m: 2, d: 12, shio: "Kuda" },
+  2003: { m: 2, d: 1, shio: "Kambing" },
+  2004: { m: 1, d: 22, shio: "Monyet" },
+  2005: { m: 2, d: 9, shio: "Ayam" },
+  2006: { m: 1, d: 29, shio: "Anjing" },
+  2007: { m: 2, d: 18, shio: "Babi" },
+  2008: { m: 2, d: 7, shio: "Tikus" },
+  2009: { m: 1, d: 26, shio: "Kerbau" },
+  2010: { m: 2, d: 14, shio: "Macan" },
+  2011: { m: 2, d: 3, shio: "Kelinci" },
+  2012: { m: 1, d: 23, shio: "Naga" },
+  2013: { m: 2, d: 10, shio: "Ular" },
+  2014: { m: 1, d: 31, shio: "Kuda" },
+  2015: { m: 2, d: 19, shio: "Kambing" },
+  2016: { m: 2, d: 8, shio: "Monyet" },
+  2017: { m: 1, d: 28, shio: "Ayam" },
+  2018: { m: 2, d: 16, shio: "Anjing" },
+  2019: { m: 2, d: 5, shio: "Babi" },
     2020: { m: 1, d: 25, shio: "Tikus" },
     2021: { m: 2, d: 12, shio: "Kerbau" },
     2022: { m: 2, d: 1, shio: "Macan" },
@@ -580,21 +678,18 @@ function getTanggalJawa(date) {
 }
 
 function getSiklusBesar(tahunJawa) {
-    if (typeof tahunJawa !== "number" || tahunJawa < 2000 || tahunJawa > 3000) {
-        tahunJawa = 2576;
-    }
-
-    const REF_TAHUN_JAWA = 2576;
-    const REF_TAHUN_IDX = 4; // Dal
+    // Referensi: 1959 AJ (2026 Masehi) adalah Tahun DAL
+    const REF_TAHUN_JAWA = 1959; 
+    const REF_TAHUN_IDX = 4; // Indeks 4 adalah DAL dalam DATA_SIKLUS_TAHUN
     const REF_WINDU_IDX = 2; // Sancaya
 
     const diffYears = tahunJawa - REF_TAHUN_JAWA;
 
     let tahunIdx = (REF_TAHUN_IDX + diffYears) % 8;
-    if (tahunIdx < 0) tahunIdx += 8;
+    while (tahunIdx < 0) tahunIdx += 8;
 
     let winduIdx = (REF_WINDU_IDX + Math.floor(diffYears / 8)) % 4;
-    if (winduIdx < 0) winduIdx += 4;
+    while (winduIdx < 0) winduIdx += 4;
 
     return {
         tahun: DATA_SIKLUS_TAHUN[tahunIdx],
@@ -723,8 +818,8 @@ function showTokenModal() {
                     <ul style="padding-left: 20px;">
                         <li><strong>💰 1 Bulan</strong> - Rp 25.000</li>
                         <li><strong>💰 3 Bulan</strong> - Rp 60.000 (Hemat Rp 15.000)</li>
-                        <li><strong>💰 1 Tahun</strong> - Rp 150.000 (Hemat Rp 150.000)</li>
-                        <li><strong>👑 Unlimited</strong> - Rp 500.000 (Akses selamanya)</li>
+                        <li><strong>💰 1 Tahun</strong> - Rp 220.000 (Hemat Rp 80.000)</li>
+                       
                     </ul>
                 </div>
                 
@@ -771,8 +866,7 @@ function showTokenModal() {
                         0851-1702-1168
                     </a></p>
                     <p style="font-size: 0.9em; color: #666; margin-bottom: 0;">
-                        Token contoh: <code>DEMO123</code> (berlaku hingga 1 Maret 2026)
-                    </p>
+                        
                 </div>
             </div>
         </div>
@@ -847,7 +941,123 @@ function checkTokenLogic(token) {
 }
 
 // ==========================================
-// RENDER KALENDER
+// FITUR CARI TANGGAL (TAMBAHAN BARU)
+// ==========================================
+
+function initDateSearch() {
+    // Set nilai default input tanggal ke hari ini
+    const today = new Date();
+    const todayStr = today.toISOString().split('T')[0];
+    
+    const searchInput = document.getElementById('dateSearchInput');
+    if (searchInput) {
+        searchInput.value = todayStr;
+        
+        // REVISI: Bulan Desember adalah index 11
+        // Gunakan format YYYY-MM-DD secara manual agar lebih aman dari masalah timezone ISO
+        searchInput.max = "2100-12-31"; 
+        searchInput.min = "1900-01-01";
+    }
+    
+    // Set event listener untuk tombol cari
+    const searchBtn = document.getElementById('searchDateBtn');
+    if (searchBtn) {
+        searchBtn.addEventListener('click', searchDate);
+    }
+    
+    // Set event listener untuk Enter di input
+    if (searchInput) {
+        searchInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                searchDate();
+            }
+        });
+    }
+    
+    console.log('Fitur Cari Tanggal telah diinisialisasi hingga tahun 2100');
+}
+
+function searchDate() {
+    const searchInput = document.getElementById('dateSearchInput');
+    if (!searchInput || !searchInput.value) {
+        alert("Silakan pilih tanggal terlebih dahulu!");
+        return;
+    }
+    
+    const selectedDate = new Date(searchInput.value + 'T00:00:00');
+    if (isNaN(selectedDate.getTime())) {
+        alert("Tanggal yang dimasukkan tidak valid!");
+        return;
+    }
+    
+    // Set calendar ke bulan yang dicari
+    current = new Date(selectedDate.getFullYear(), selectedDate.getMonth(), 1);
+    generateCalendar();
+    
+    // Highlight tanggal yang dicari
+    highlightSearchedDate(selectedDate);
+    
+    // Tampilkan detail jika token valid
+    const savedToken = localStorage.getItem('kalender_token_tius');
+    if (savedToken && checkTokenLogic(savedToken)) {
+        updateDetail(selectedDate, getPasaran(selectedDate));
+    } else {
+        showTokenModal();
+    }
+    
+    // Scroll ke detail section
+    const detailSection = document.getElementById('detail');
+    if (detailSection) {
+        detailSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+}
+
+function highlightSearchedDate(date) {
+    // Hapus highlight sebelumnya
+    document.querySelectorAll('.calendar-day').forEach(cell => {
+        cell.classList.remove('searched-date');
+    });
+    
+    // Highlight tanggal yang dicari
+    const y = date.getFullYear();
+    const m = date.getMonth();
+    const d = date.getDate();
+    
+    // Cari cell yang sesuai dengan tanggal yang dicari
+    const cells = document.querySelectorAll('.calendar-day');
+    cells.forEach(cell => {
+        const cellDateNum = parseInt(cell.querySelector('.date-num')?.textContent);
+        if (cellDateNum === d && 
+            current.getFullYear() === y && 
+            current.getMonth() === m) {
+            cell.classList.add('searched-date');
+            
+            // Tambahkan indikator visual
+            const indicator = document.createElement('div');
+            indicator.className = 'search-indicator';
+            indicator.innerHTML = '🔍';
+            indicator.style.cssText = `
+                position: absolute;
+                top: 2px;
+                right: 2px;
+                font-size: 10px;
+                background: #D30000;
+                color: white;
+                width: 16px;
+                height: 16px;
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            `;
+            cell.style.position = 'relative';
+            cell.appendChild(indicator);
+        }
+    });
+}
+
+// ==========================================
+// RENDER KALENDER (DIMODIFIKASI UNTUK SUPPORT SEARCH)
 // ==========================================
 
 function generateCalendar() {
@@ -889,6 +1099,13 @@ function generateCalendar() {
             const savedToken = localStorage.getItem('kalender_token_tius');
             
             if (savedToken && checkTokenLogic(savedToken)) {
+                // Update input search dengan tanggal yang dipilih
+                const searchInput = document.getElementById('dateSearchInput');
+                if (searchInput) {
+                    const selectedDateStr = dateObj.toISOString().split('T')[0];
+                    searchInput.value = selectedDateStr;
+                }
+                
                 document.querySelectorAll('.calendar-day').forEach(c => c.classList.remove('selected-day'));
                 cell.classList.add('selected-day');
                 updateDetail(dateObj, p);
@@ -898,10 +1115,21 @@ function generateCalendar() {
         };
         grid.appendChild(cell);
     }
+    
+    // Setelah render, cek apakah ada tanggal yang sedang dicari
+    const searchInput = document.getElementById('dateSearchInput');
+    if (searchInput && searchInput.value) {
+        const searchedDate = new Date(searchInput.value + 'T00:00:00');
+        if (!isNaN(searchedDate.getTime()) && 
+            searchedDate.getFullYear() === y && 
+            searchedDate.getMonth() === m) {
+            setTimeout(() => highlightSearchedDate(searchedDate), 100);
+        }
+    }
 }
 
 // ==========================================
-// UPDATE DETAIL LENGKAP
+// UPDATE DETAIL LENGKAP (TIDAK BERUBAH)
 // ==========================================
 
 async function updateDetail(date, pasaran) {
@@ -1171,7 +1399,7 @@ async function updateDetail(date, pasaran) {
 }
 
 // ==========================================
-// FITUR SALIN & SHARE
+// FITUR SALIN & SHARE (TIDAK BERUBAH)
 // ==========================================
 
 function copyToClipboard() {
@@ -1220,7 +1448,7 @@ function shareWhatsApp() {
 }
 
 // ==========================================
-// FUNGSI CARI WETON
+// FUNGSI CARI WETON (LAMA)
 // ==========================================
 
 function searchWeton() {
@@ -1244,7 +1472,7 @@ function searchWeton() {
 }
 
 // ==========================================
-// INITIAL START
+// INITIAL START (DIMODIFIKASI)
 // ==========================================
 
 document.addEventListener("DOMContentLoaded", async () => {
@@ -1255,8 +1483,13 @@ document.addEventListener("DOMContentLoaded", async () => {
         console.error('Gagal memuat data wuku:', error);
     });
     
+    // Inisialisasi kalender
     generateCalendar();
     
+    // Inisialisasi fitur cari tanggal
+    initDateSearch();
+    
+    // Tampilkan detail untuk hari ini jika token valid
     const savedToken = localStorage.getItem('kalender_token_tius');
     if (savedToken && checkTokenLogic(savedToken)) {
         updateDetail(TODAY, getPasaran(TODAY));
