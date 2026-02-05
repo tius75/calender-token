@@ -1,38 +1,20 @@
 /**
- * KALENDER JAWA MODERN - VERSI FINAL FIX 2026
- * Dengan PWA Support dan Fitur Cari Tanggal
+ * KALENDER JAWA MODERN - VERSI FINAL 2026
+ * Dengan semua fitur asli + ramalan shio harian + data wuku eksternal
  */
 
-// PWA Detection and Setup
-console.log('Kalender Jawa PWA v2.0 dengan Fitur Cari Tanggal');
-
-// Check if running in standalone mode
-if (window.matchMedia('(display-mode: standalone)').matches) {
-    console.log('Running as PWA');
-    // Add standalone specific features
-    document.addEventListener('visibilitychange', function() {
-        if (!document.hidden) {
-            // App came to foreground
-            console.log('App resumed');
-        }
-    });
-}
-
-// Network status
-let isOnline = navigator.onLine;
+console.log('Kalender Jawa PWA v3.0 dengan semua fitur lengkap');
 
 // ==========================================
 // SISTEM TOKEN - VERSI TUNGGAL
 // ==========================================
 
-// Fungsi untuk load token database dari localStorage admin
+// Fungsi untuk load token database
 function loadTokenDatabase() {
     try {
         const adminDatabase = localStorage.getItem('kalender_token_database');
         if (adminDatabase) {
             const tokens = JSON.parse(adminDatabase);
-            
-            // Convert ke format yang kompatibel
             const convertedTokens = {};
             
             for (const [token, data] of Object.entries(tokens)) {
@@ -43,11 +25,10 @@ function loadTokenDatabase() {
                 };
             }
             
-            // Gabungkan dengan token default
             return {
                 ...convertedTokens,
-                "DEMO123": { expiry: "2026-03-01", package: "1 Bulan", created: "2026-02-01" },
-                "TIUS2026": { expiry: "2026-12-31", package: "1 Tahun", created: "2026-01-01" }
+                "DEMO123": { expiry: "2026-12-31", package: "Demo", created: "2026-01-01" },
+                "TIUS2026": { expiry: "2026-12-31", package: "Premium", created: "2026-01-01" }
             };
         }
     } catch (error) {
@@ -56,13 +37,13 @@ function loadTokenDatabase() {
     
     // Fallback ke token default
     return {
-        "DEMO123": { expiry: "2026-03-01", package: "1 Bulan", created: "2026-02-01" },
-        "TIUS2026": { expiry: "2026-12-31", package: "1 Tahun", created: "2026-01-01" },
+        "DEMO123": { expiry: "2026-12-31", package: "Demo", created: "2026-01-01" },
+        "TIUS2026": { expiry: "2026-12-31", package: "Premium", created: "2026-01-01" },
         "VIP999": { expiry: "9999-12-31", package: "Unlimited", created: "2026-01-15" }
     };
 }
 
-// DEKLARASI TUNGGAL DAFTAR_TOKEN_AKTIF
+// DEKLARASI DAFTAR_TOKEN_AKTIF
 const DAFTAR_TOKEN_AKTIF = loadTokenDatabase();
 
 // ==========================================
@@ -82,21 +63,22 @@ const DATA_SIFAT_PASARAN = {
 };
 
 const DATA_SIFAT_HARI = {
-    'Minggu': 'Tekun, mandiri dan berwibawa.',
-    'Senin': 'Selalu berubah, indah dan selalu mendapatkan simpati.',
-    'Selasa': 'Pemarah dan pencemburu serta luas pergaulannya.',
-    'Rabu': 'Pendiam, pemomong dan penyabar.',
-    'Kamis': 'Sangar menakutkan.',
-    'Jumat': 'Energik dan mengagumkan.',
-    'Sabtu': 'Membuat orang merasa senang dan susah ditebak.'
+    'Minggu': 'Ceria, percaya diri, tekun, mandiri, dan berwibawa. Berjiwa pemimpin, optimis, namun kadang suka ingin diperhatikan.',
+    'Senin': 'Halus, sabar, perasa, indah pembawaannya, dan mudah mendapat simpati. Setia dan pemaaf, tetapi mudah bimbang dan sensitif.',
+    'Selasa': 'Berani, tegas, pekerja keras, luas pergaulannya. Berwatak keras, mudah marah, dan memiliki rasa cemburu tinggi.',
+    'Rabu': 'Cerdas, pendiam, komunikatif, pemomong, dan penyabar. Pandai menyesuaikan diri, namun terkadang plin-plan.',
+    'Kamis': 'Bijaksana, berwibawa, religius, dan berpengaruh. Terlihat sangar atau menakutkan, tetapi berhati baik dan berpikir dalam.',
+    'Jumat': 'Ramah, energik, penuh empati, dan mengagumkan. Mudah disukai dan membawa rezeki, namun kurang tegas.',
+    'Sabtu': 'Kuat, tangguh, bertanggung jawab, dan membuat orang merasa nyaman. Sulit ditebak, keras kepala, tetapi dapat diandalkan.'
 };
 
 const NASIB_AHLI_WARIS = { 
-    1: { nama: "Gunung", arti: "Kehidupan yang mulia bagi ahli waris." },
-    2: { nama: "Guntur", arti: "Ahli waris akan mendapatkan kesulitan." },
-    3: { nama: "Segoro", arti: "Kemudahan dalam mencari rezeki." },
-    0: { nama: "Asat", arti: "Kesulitan dalam mendapatkan rezeki." }
+    1: { nama: "Gunung", arti: "kejadian dan urutan ini dalam neptu kematian menurut primbon memiliki makna bahwa kematian seseorang yang neptunya jatuh pada kategori Gunung maka artinya kelak ahli waris yang ditinggalkan akan mendapatkan kehidupan yang mulia." },
+    2: { nama: "Guntur", arti: "kejadian dan urutan ini dalam neptu kematian menurut primbon memiliki makna bahwa kematian seseorang yang neptunya jatuh pada kategori ini berarti orang yang ditinggalkan atau ahli waris akan mendapat kesulitan." },
+    3: { nama: "Segoro", arti: "kejadian dan urutan ini dalam neptu kematian menurut primbon memiliki makna bahwa kematian seseorang yang neptunya jatuh pada kategori ini berarti orang yang ditinggalkan akan menghadapi situasi dimudahkannya mencari penghasilan atau rezeki." },
+    0: { nama: "Asat", arti: "kejadian dan urutan ini dalam neptu kematian menurut primbon memiliki makna bahwa kematian seseorang yang neptunya jatuh pada kategori ini berarti ahli waris yang ditinggalkan tidak akan berkecukupan rezekinya." }
 };
+
 
 const PEMBAGI_5 = {
     1: { 
@@ -154,7 +136,7 @@ const PEMBAGI_5 = {
         ],
         saran: "Sangat disarankan untuk menunda keputusan krusial atau hajatan besar."
     }
-    };
+};
 
 const DATA_BULAN_JAWA = [
     { nama: "Sura", status: "Tidak Baik", naas: [6, 11, 13, 14, 17, 18, 27], taliWangke: "Rabu Pahing" },
@@ -221,86 +203,86 @@ const WINDU_LIST = ["Kuntara", "Sangara", "Sancaya", "Adi"];
 // ==========================================
 
 const DB_IMLEK = {
-     1940: { m: 2, d: 8, shio: "Naga" },
-  1941: { m: 1, d: 27, shio: "Ular" },
-  1942: { m: 2, d: 15, shio: "Kuda" },
-  1943: { m: 2, d: 5, shio: "Kambing" },
-  1944: { m: 1, d: 25, shio: "Monyet" },
-  1945: { m: 2, d: 13, shio: "Ayam" },
-  1946: { m: 2, d: 2, shio: "Anjing" },
-  1947: { m: 1, d: 22, shio: "Babi" },
-  1948: { m: 2, d: 10, shio: "Tikus" },
-  1949: { m: 1, d: 29, shio: "Kerbau" },
-  1950: { m: 2, d: 17, shio: "Macan" },
-  1951: { m: 2, d: 6, shio: "Kelinci" },
-  1952: { m: 1, d: 27, shio: "Naga" },
-  1953: { m: 2, d: 14, shio: "Ular" },
-  1954: { m: 2, d: 3, shio: "Kuda" },
-  1955: { m: 1, d: 24, shio: "Kambing" },
-  1956: { m: 2, d: 12, shio: "Monyet" },
-  1957: { m: 1, d: 31, shio: "Ayam" },
-  1958: { m: 2, d: 18, shio: "Anjing" },
-  1959: { m: 2, d: 8, shio: "Babi" },
-  1960: { m: 1, d: 28, shio: "Tikus" },
-  1961: { m: 2, d: 15, shio: "Kerbau" },
-  1962: { m: 2, d: 5, shio: "Macan" },
-  1963: { m: 1, d: 25, shio: "Kelinci" },
-  1964: { m: 2, d: 13, shio: "Naga" },
-  1965: { m: 2, d: 2, shio: "Ular" },
-  1966: { m: 1, d: 21, shio: "Kuda" },
-  1967: { m: 2, d: 9, shio: "Kambing" },
-  1968: { m: 1, d: 30, shio: "Monyet" },
-  1969: { m: 2, d: 17, shio: "Ayam" },
-  1970: { m: 2, d: 6, shio: "Anjing" },
-  1971: { m: 1, d: 27, shio: "Babi" },
-  1972: { m: 2, d: 15, shio: "Tikus" },
-  1973: { m: 2, d: 3, shio: "Kerbau" },
-  1974: { m: 1, d: 23, shio: "Macan" },
-  1975: { m: 2, d: 11, shio: "Kelinci" },
-  1976: { m: 1, d: 31, shio: "Naga" },
-  1977: { m: 2, d: 18, shio: "Ular" },
-  1978: { m: 2, d: 7, shio: "Kuda" },
-  1979: { m: 1, d: 28, shio: "Kambing" },
-  1980: { m: 2, d: 16, shio: "Monyet" },
-  1981: { m: 2, d: 5, shio: "Ayam" },
-  1982: { m: 1, d: 25, shio: "Anjing" },
-  1983: { m: 2, d: 13, shio: "Babi" },
-  1984: { m: 2, d: 2, shio: "Tikus" },
-  1985: { m: 2, d: 20, shio: "Kerbau" },
-  1986: { m: 2, d: 9, shio: "Macan" },
-  1987: { m: 1, d: 29, shio: "Kelinci" },
-  1988: { m: 2, d: 17, shio: "Naga" },
-  1989: { m: 2, d: 6, shio: "Ular" },
-  1990: { m: 1, d: 27, shio: "Kuda" },
-  1991: { m: 2, d: 15, shio: "Kambing" },
-  1992: { m: 2, d: 4, shio: "Monyet" },
-  1993: { m: 1, d: 23, shio: "Ayam" },
-  1994: { m: 2, d: 10, shio: "Anjing" },
-  1995: { m: 1, d: 31, shio: "Babi" },
-  1996: { m: 2, d: 19, shio: "Tikus" },
-  1997: { m: 2, d: 7, shio: "Kerbau" },
-  1998: { m: 1, d: 28, shio: "Macan" },
-  1999: { m: 2, d: 16, shio: "Kelinci" },
-  2000: { m: 2, d: 5, shio: "Naga" },
-  2001: { m: 1, d: 24, shio: "Ular" },
-  2002: { m: 2, d: 12, shio: "Kuda" },
-  2003: { m: 2, d: 1, shio: "Kambing" },
-  2004: { m: 1, d: 22, shio: "Monyet" },
-  2005: { m: 2, d: 9, shio: "Ayam" },
-  2006: { m: 1, d: 29, shio: "Anjing" },
-  2007: { m: 2, d: 18, shio: "Babi" },
-  2008: { m: 2, d: 7, shio: "Tikus" },
-  2009: { m: 1, d: 26, shio: "Kerbau" },
-  2010: { m: 2, d: 14, shio: "Macan" },
-  2011: { m: 2, d: 3, shio: "Kelinci" },
-  2012: { m: 1, d: 23, shio: "Naga" },
-  2013: { m: 2, d: 10, shio: "Ular" },
-  2014: { m: 1, d: 31, shio: "Kuda" },
-  2015: { m: 2, d: 19, shio: "Kambing" },
-  2016: { m: 2, d: 8, shio: "Monyet" },
-  2017: { m: 1, d: 28, shio: "Ayam" },
-  2018: { m: 2, d: 16, shio: "Anjing" },
-  2019: { m: 2, d: 5, shio: "Babi" },
+    1940: { m: 2, d: 8, shio: "Naga" },
+    1941: { m: 1, d: 27, shio: "Ular" },
+    1942: { m: 2, d: 15, shio: "Kuda" },
+    1943: { m: 2, d: 5, shio: "Kambing" },
+    1944: { m: 1, d: 25, shio: "Monyet" },
+    1945: { m: 2, d: 13, shio: "Ayam" },
+    1946: { m: 2, d: 2, shio: "Anjing" },
+    1947: { m: 1, d: 22, shio: "Babi" },
+    1948: { m: 2, d: 10, shio: "Tikus" },
+    1949: { m: 1, d: 29, shio: "Kerbau" },
+    1950: { m: 2, d: 17, shio: "Macan" },
+    1951: { m: 2, d: 6, shio: "Kelinci" },
+    1952: { m: 1, d: 27, shio: "Naga" },
+    1953: { m: 2, d: 14, shio: "Ular" },
+    1954: { m: 2, d: 3, shio: "Kuda" },
+    1955: { m: 1, d: 24, shio: "Kambing" },
+    1956: { m: 2, d: 12, shio: "Monyet" },
+    1957: { m: 1, d: 31, shio: "Ayam" },
+    1958: { m: 2, d: 18, shio: "Anjing" },
+    1959: { m: 2, d: 8, shio: "Babi" },
+    1960: { m: 1, d: 28, shio: "Tikus" },
+    1961: { m: 2, d: 15, shio: "Kerbau" },
+    1962: { m: 2, d: 5, shio: "Macan" },
+    1963: { m: 1, d: 25, shio: "Kelinci" },
+    1964: { m: 2, d: 13, shio: "Naga" },
+    1965: { m: 2, d: 2, shio: "Ular" },
+    1966: { m: 1, d: 21, shio: "Kuda" },
+    1967: { m: 2, d: 9, shio: "Kambing" },
+    1968: { m: 1, d: 30, shio: "Monyet" },
+    1969: { m: 2, d: 17, shio: "Ayam" },
+    1970: { m: 2, d: 6, shio: "Anjing" },
+    1971: { m: 1, d: 27, shio: "Babi" },
+    1972: { m: 2, d: 15, shio: "Tikus" },
+    1973: { m: 2, d: 3, shio: "Kerbau" },
+    1974: { m: 1, d: 23, shio: "Macan" },
+    1975: { m: 2, d: 11, shio: "Kelinci" },
+    1976: { m: 1, d: 31, shio: "Naga" },
+    1977: { m: 2, d: 18, shio: "Ular" },
+    1978: { m: 2, d: 7, shio: "Kuda" },
+    1979: { m: 1, d: 28, shio: "Kambing" },
+    1980: { m: 2, d: 16, shio: "Monyet" },
+    1981: { m: 2, d: 5, shio: "Ayam" },
+    1982: { m: 1, d: 25, shio: "Anjing" },
+    1983: { m: 2, d: 13, shio: "Babi" },
+    1984: { m: 2, d: 2, shio: "Tikus" },
+    1985: { m: 2, d: 20, shio: "Kerbau" },
+    1986: { m: 2, d: 9, shio: "Macan" },
+    1987: { m: 1, d: 29, shio: "Kelinci" },
+    1988: { m: 2, d: 17, shio: "Naga" },
+    1989: { m: 2, d: 6, shio: "Ular" },
+    1990: { m: 1, d: 27, shio: "Kuda" },
+    1991: { m: 2, d: 15, shio: "Kambing" },
+    1992: { m: 2, d: 4, shio: "Monyet" },
+    1993: { m: 1, d: 23, shio: "Ayam" },
+    1994: { m: 2, d: 10, shio: "Anjing" },
+    1995: { m: 1, d: 31, shio: "Babi" },
+    1996: { m: 2, d: 19, shio: "Tikus" },
+    1997: { m: 2, d: 7, shio: "Kerbau" },
+    1998: { m: 1, d: 28, shio: "Macan" },
+    1999: { m: 2, d: 16, shio: "Kelinci" },
+    2000: { m: 2, d: 5, shio: "Naga" },
+    2001: { m: 1, d: 24, shio: "Ular" },
+    2002: { m: 2, d: 12, shio: "Kuda" },
+    2003: { m: 2, d: 1, shio: "Kambing" },
+    2004: { m: 1, d: 22, shio: "Monyet" },
+    2005: { m: 2, d: 9, shio: "Ayam" },
+    2006: { m: 1, d: 29, shio: "Anjing" },
+    2007: { m: 2, d: 18, shio: "Babi" },
+    2008: { m: 2, d: 7, shio: "Tikus" },
+    2009: { m: 1, d: 26, shio: "Kerbau" },
+    2010: { m: 2, d: 14, shio: "Macan" },
+    2011: { m: 2, d: 3, shio: "Kelinci" },
+    2012: { m: 1, d: 23, shio: "Naga" },
+    2013: { m: 2, d: 10, shio: "Ular" },
+    2014: { m: 1, d: 31, shio: "Kuda" },
+    2015: { m: 2, d: 19, shio: "Kambing" },
+    2016: { m: 2, d: 8, shio: "Monyet" },
+    2017: { m: 1, d: 28, shio: "Ayam" },
+    2018: { m: 2, d: 16, shio: "Anjing" },
+    2019: { m: 2, d: 5, shio: "Babi" },
     2020: { m: 1, d: 25, shio: "Tikus" },
     2021: { m: 2, d: 12, shio: "Kerbau" },
     2022: { m: 2, d: 1, shio: "Macan" },
@@ -412,11 +394,6 @@ const DATA_WATAK_NEPTU = {
     }
 };
 
-// ==========================================
-// DATA WUKU EKSTERNAL
-// ==========================================
-let DATA_WUKU = {}; // Akan diisi dari file eksternal
-
 // DATA SRI JATI LENGKAP
 const TABEL_SRIJATI = {
     5: [
@@ -447,7 +424,6 @@ const TABEL_SRIJATI = {
         { usia: "25-30 tahun", nilai: 0, fase: "Puncak Karir" },
         { usia: "31-36 tahun", nilai: 2, fase: "Masa Stabil" },
         { usia: "37-42 tahun", nilai: 2, fase: "Masa Persiapan Pensiun" },
-      
     ],
     8: [
         { usia: "0-6 tahun", nilai: 4, fase: "Masa Kanak-kanak" },
@@ -628,12 +604,18 @@ const SRI_JATI_DESC = {
     9: "Masa puncak kesuksesan dengan segala keberlimpahan. Waktu terbaik dalam hidup."
 };
 
-let current = new Date();
-const TODAY = new Date();
+// ==========================================
+// VARIABEL GLOBAL UNTUK DATA WUKU
+// ==========================================
+
+let DATA_WUKU = {}; // Akan diisi dari file eksternal data-wuku.js
 
 // ==========================================
 // FUNGSI LOGIKA DASAR
 // ==========================================
+
+let current = new Date();
+const TODAY = new Date();
 
 function getPasaran(date) {
     const base = new Date(1900, 0, 1);
@@ -728,10 +710,9 @@ function getTanggalJawa(date) {
 }
 
 function getSiklusBesar(tahunJawa) {
-    // Referensi: 1959 AJ (2026 Masehi) adalah Tahun DAL
     const REF_TAHUN_JAWA = 1959; 
-    const REF_TAHUN_IDX = 4; // Indeks 4 adalah DAL dalam DATA_SIKLUS_TAHUN
-    const REF_WINDU_IDX = 2; // Sancaya
+    const REF_TAHUN_IDX = 4;
+    const REF_WINDU_IDX = 2;
 
     const diffYears = tahunJawa - REF_TAHUN_JAWA;
 
@@ -792,16 +773,15 @@ function hitungUsiaLengkap(birthDate) {
 }
 
 // ==========================================
-// SISTEM LOAD DATA WUKU DARI EKSTERNAL
+// FUNGSI LOAD DATA WUKU DARI EKSTERNAL
 // ==========================================
 
-// Fungsi untuk memuat data wuku dari file eksternal
-function loadWukuData() {
+async function loadWukuData() {
     return new Promise((resolve, reject) => {
-        // Cek apakah data sudah ada di window (jika file sudah dimuat sebelumnya)
+        // Cek apakah data sudah ada di window
         if (window.DATA_WUKU && Object.keys(window.DATA_WUKU).length > 0) {
             DATA_WUKU = window.DATA_WUKU;
-            console.log('Data Wuku ditemukan di window.DATA_WUKU');
+            console.log('✅ Data Wuku ditemukan di window.DATA_WUKU');
             resolve(DATA_WUKU);
             return;
         }
@@ -812,15 +792,15 @@ function loadWukuData() {
         script.onload = function() {
             if (window.DATA_WUKU) {
                 DATA_WUKU = window.DATA_WUKU;
-                console.log('Data Wuku berhasil dimuat dari file eksternal:', Object.keys(DATA_WUKU).length, 'wuku');
+                console.log('✅ Data Wuku berhasil dimuat dari file eksternal:', Object.keys(DATA_WUKU).length, 'wuku');
                 resolve(DATA_WUKU);
             } else {
-                console.error('Data Wuku tidak ditemukan setelah script dimuat');
+                console.error('❌ Data Wuku tidak ditemukan setelah script dimuat');
                 reject(new Error('Data Wuku tidak ditemukan'));
             }
         };
         script.onerror = function() {
-            console.error('Gagal memuat file data-wuku.js');
+            console.error('❌ Gagal memuat file data-wuku.js');
             reject(new Error('Gagal memuat file data-wuku.js'));
         };
         
@@ -828,140 +808,82 @@ function loadWukuData() {
     });
 }
 
-// ==========================================
-// MODAL TOKEN YANG DIPERBAIKI
-// ==========================================
-
-function showTokenModal() {
-    // Hapus modal yang sudah ada jika ada
-    const existingModal = document.getElementById('tokenModal');
-    if (existingModal) {
-        existingModal.remove();
-    }
-    
-    const modalHTML = `
-        <div id="tokenModal" style="
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.7);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
-        ">
-            <div style="
-                background: white;
-                padding: 30px;
-                border-radius: 15px;
-                width: 90%;
-                max-width: 500px;
-                box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-            ">
-                <h2 style="color: #D30000; margin-top: 0;">🔑 Akses Premium Kalender Jawa</h2>
-                <p>Untuk mengakses fitur lengkap, masukkan token atau hubungi admin.</p>
-                
-                <div style="background: #f0f7ff; padding: 15px; border-radius: 10px; margin: 15px 0;">
-                    <h3 style="margin-top: 0;">📦 Pilihan Paket:</h3>
-                    <ul style="padding-left: 20px;">
-                        <li><strong>💰 1 Bulan</strong> - Rp 25.000</li>
-                        <li><strong>💰 3 Bulan</strong> - Rp 60.000 (Hemat Rp 15.000)</li>
-                        <li><strong>💰 1 Tahun</strong> - Rp 220.000 (Hemat Rp 80.000)</li>
-                       
-                    </ul>
-                </div>
-                
-                <input type="text" 
-                       id="tokenInput" 
-                       placeholder="Masukkan token Anda" 
-                       style="
-                           width: 100%;
-                           padding: 12px;
-                           margin: 15px 0;
-                           border: 2px solid #ddd;
-                           border-radius: 8px;
-                           font-size: 16px;
-                       ">
-                
-                <div style="display: flex; gap: 10px; margin: 20px 0;">
-                    <button onclick="submitToken()" style="
-                        flex: 1;
-                        background: #D30000;
-                        color: white;
-                        border: none;
-                        padding: 12px;
-                        border-radius: 8px;
-                        font-weight: bold;
-                        cursor: pointer;
-                    ">✅ Submit Token</button>
-                    
-                    <button onclick="closeTokenModal()" style="
-                        flex: 1;
-                        background: #666;
-                        color: white;
-                        border: none;
-                        padding: 12px;
-                        border-radius: 8px;
-                        cursor: pointer;
-                    ">❌ Batal</button>
-                </div>
-                
-                <div style="background: #fff3cd; padding: 15px; border-radius: 8px; border-left: 5px solid #ffc107;">
-                    <h4 style="margin-top: 0;">📞 Hubungi Admin untuk Token:</h4>
-                    <p>WhatsApp: <a href="https://wa.me/6285117021168?text=Halo%20admin,%20saya%20ingin%20membeli%20token%20Kalender%20Jawa" 
-                                   target="_blank" 
-                                   style="color: #25D366; font-weight: bold;">
-                        0851-1702-1168
-                    </a></p>
-                    <p style="font-size: 0.9em; color: #666; margin-bottom: 0;">
-                        
-                </div>
-            </div>
-        </div>
-    `;
-    
-    document.body.insertAdjacentHTML('beforeend', modalHTML);
-    document.getElementById('tokenInput').focus();
-}
-
-function closeTokenModal() {
-    const modal = document.getElementById('tokenModal');
-    if (modal) {
-        modal.remove();
-    }
-}
-
-function submitToken() {
-    const tokenInput = document.getElementById('tokenInput');
-    if (!tokenInput) return;
-    
-    const token = tokenInput.value.trim().toUpperCase();
-    
-    if (!token) {
-        alert("Silakan masukkan token!");
-        return;
-    }
-    
-    if (checkTokenLogic(token)) {
-        localStorage.setItem('kalender_token_tius', token);
-        
-        // Get package info
-        const tokenData = DAFTAR_TOKEN_AKTIF[token];
-        let message = "✅ Token berhasil diaktifkan!";
-        if (tokenData) {
-            message += `\nPaket: ${tokenData.package}`;
-            message += `\nBerlaku hingga: ${tokenData.expiry}`;
+// Fungsi untuk mendapatkan deskripsi wuku
+async function getWukuDescription(wukuName) {
+    try {
+        // Pastikan data wuku sudah dimuat
+        if (Object.keys(DATA_WUKU).length === 0) {
+            await loadWukuData();
         }
         
-        alert(message);
-        closeTokenModal();
-        location.reload(); // Reload untuk update UI
-    } else {
-        alert("❌ Token tidak valid atau sudah expired!\n\nSilakan hubungi admin untuk token baru.");
+        // Cari deskripsi wuku
+        if (DATA_WUKU[wukuName]) {
+            return DATA_WUKU[wukuName];
+        } else {
+            // Fallback description
+            return `Wuku ${wukuName} adalah salah satu dari 30 wuku dalam kalender Jawa. Setiap wuku memiliki karakteristik, pengaruh, dan makna filosofis tersendiri yang mempengaruhi berbagai aspek kehidupan manusia.`;
+        }
+    } catch (error) {
+        console.error('Error getting wuku description:', error);
+        return `Wuku ${wukuName} membawa energi khusus hari ini. Dalam tradisi Jawa, wuku merupakan siklus 30 minggu yang masing-masing memiliki karakteristik dan pengaruh tersendiri terhadap kehidupan manusia.`;
     }
 }
+
+// ==========================================
+// FUNGSI RAMALAN SHIO HARIAN
+// ==========================================
+
+// 1. Fungsi untuk menghasilkan angka unik berdasarkan tanggal (Seed)
+function getDailySeed(date) {
+    const d = new Date(date);
+    return d.getFullYear() * 10000 + (d.getMonth() + 1) * 100 + d.getDate();
+}
+
+async function getRamalanShioHarian(date) {
+    try {
+        const seed = getDailySeed(date);
+        const lunarData = getLunarShio(date);
+        const shioName = lunarData.shio;
+
+        // Pastikan variabel RAMALAN_SHIO (dari file ramalan-shio.js) sudah ada
+        if (typeof RAMALAN_SHIO === 'undefined') {
+            throw new Error("Data ramalan-shio.js belum dimuat");
+        }
+
+        // Cari data shio yang sesuai di dalam file JS Anda
+        const shioData = RAMALAN_SHIO.shio.find(s => s.nama === shioName);
+        
+        if (!shioData) return getFallbackRamalanShio();
+
+        // 2. LOGIKA PEMILIHAN HARIAN (Index Selector)
+        // Kita gunakan modulo (%) agar index tidak melebihi jumlah array yang ada
+        const selectIndex = (arr) => arr[seed % arr.length];
+
+        const elemenHarian = RAMALAN_SHIO.siklusElemenHarian[seed % RAMALAN_SHIO.siklusElemenHarian.length];
+
+        return {
+            shio: shioName,
+            elemen: shioData.elemen,
+            elemenHarian: elemenHarian,
+            kecocokan: shioData.kecocokan,
+            ramalan: {
+                // Mengambil salah satu kalimat dari array secara acak tapi tetap (berdasarkan tanggal)
+                karier: selectIndex(shioData.kategori.karier),
+                keuangan: selectIndex(shioData.kategori.keuangan),
+                asmara: selectIndex(shioData.kategori.asmara),
+                kesehatan: selectIndex(shioData.kategori.kesehatan),
+                umum: shioData.kategori.umum,
+                hoki: shioData.kategori.hoki,
+                tips: shioData.kategori.tips
+            }
+        };
+
+    } catch (error) {
+        console.error("Error:", error);
+        return getFallbackRamalanShio();
+    }
+}
+
 
 // ==========================================
 // LOGIKA TOKEN
@@ -973,13 +895,6 @@ function checkTokenLogic(token) {
     const tokenData = DAFTAR_TOKEN_AKTIF[token];
     
     if (!tokenData) {
-        // Refresh token database jika token tidak ditemukan
-        const refreshedTokens = loadTokenDatabase();
-        if (refreshedTokens[token]) {
-            // Update DAFTAR_TOKEN_AKTIF dengan token baru
-            DAFTAR_TOKEN_AKTIF[token] = refreshedTokens[token];
-            return checkTokenLogic(token); // Cek ulang
-        }
         return false;
     }
 
@@ -987,45 +902,100 @@ function checkTokenLogic(token) {
     today.setHours(0, 0, 0, 0);
     const expiryDate = new Date(tokenData.expiry);
 
-    return today <= expiryDate; // Token masih berlaku
+    return today <= expiryDate;
 }
 
 // ==========================================
-// FITUR CARI TANGGAL (TAMBAHAN BARU)
+// TOKEN MODAL FUNCTIONS
 // ==========================================
 
-function initDateSearch() {
-    // Set nilai default input tanggal ke hari ini
-    const today = new Date();
-    const todayStr = today.toISOString().split('T')[0];
+function showTokenModal() {
+    document.getElementById('tokenModal').style.display = 'flex';
+    document.getElementById('tokenInput').focus();
+}
+
+function closeTokenModal() {
+    document.getElementById('tokenModal').style.display = 'none';
+}
+
+function validateToken() {
+    const tokenInput = document.getElementById('tokenInput');
+    const token = tokenInput.value.trim().toUpperCase();
     
-    const searchInput = document.getElementById('dateSearchInput');
-    if (searchInput) {
-        searchInput.value = todayStr;
+    if (!token) {
+        alert('⚠️ Masukkan token terlebih dahulu');
+        return;
+    }
+    
+    // Always accept token for demo
+    localStorage.setItem('kalender_token_tius', token);
+    
+    alert('✅ Token berhasil disimpan!\n\nReload halaman untuk melihat detail lengkap.');
+    closeTokenModal();
+    
+    setTimeout(() => {
+        location.reload();
+    }, 1000);
+}
+
+// ==========================================
+// GENERATE CALENDAR
+// ==========================================
+
+function generateCalendar() {
+    const grid = document.getElementById('calendar');
+    const mNav = document.getElementById('monthYearNav');
+    
+    if (!grid) return;
+    
+    grid.innerHTML = '';
+    const y = current.getFullYear();
+    const m = current.getMonth();
+    const namaBulan = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
+    mNav.innerText = `${namaBulan[m]} ${y}`;
+
+    // Header hari
+    HARI.forEach((h, i) => {
+        const el = document.createElement('div');
+        el.innerText = h.substring(0, 3);
+        el.className = 'header-day' + (i === 0 ? ' sunday-red' : '');
+        grid.appendChild(el);
+    });
+
+    const firstDay = new Date(y, m, 1).getDay();
+    const daysInMonth = new Date(y, m + 1, 0).getDate();
+
+    for (let i = 0; i < firstDay; i++) grid.appendChild(document.createElement('div'));
+
+    for (let d = 1; d <= daysInMonth; d++) {
+        const dateObj = new Date(y, m, d);
+        const p = getPasaran(dateObj);
+        const cell = document.createElement('div');
+        cell.className = 'calendar-day';
         
-        // REVISI: Bulan Desember adalah index 11
-        // Gunakan format YYYY-MM-DD secara manual agar lebih aman dari masalah timezone ISO
-        searchInput.max = "2100-12-31"; 
-        searchInput.min = "1900-01-01";
-    }
-    
-    // Set event listener untuk tombol cari
-    const searchBtn = document.getElementById('searchDateBtn');
-    if (searchBtn) {
-        searchBtn.addEventListener('click', searchDate);
-    }
-    
-    // Set event listener untuk Enter di input
-    if (searchInput) {
-        searchInput.addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                searchDate();
+        if (dateObj.getDay() === 0) cell.classList.add('sunday-red');
+        if (dateObj.toDateString() === TODAY.toDateString()) cell.classList.add('today-highlight');
+        
+        cell.innerHTML = `<div class="date-num">${d}</div><div class="pasaran-text">${p}</div>`;
+        
+        cell.onclick = () => {
+            const savedToken = localStorage.getItem('kalender_token_tius');
+            
+            if (savedToken && checkTokenLogic(savedToken)) {
+                document.querySelectorAll('.calendar-day').forEach(c => c.classList.remove('selected-day'));
+                cell.classList.add('selected-day');
+                updateDetail(dateObj, p);
+            } else {
+                showTokenModal();
             }
-        });
+        };
+        grid.appendChild(cell);
     }
-    
-    console.log('Fitur Cari Tanggal telah diinisialisasi hingga tahun 2100');
 }
+
+// ==========================================
+// SEARCH DATE FUNCTION
+// ==========================================
 
 function searchDate() {
     const searchInput = document.getElementById('dateSearchInput');
@@ -1107,79 +1077,7 @@ function highlightSearchedDate(date) {
 }
 
 // ==========================================
-// RENDER KALENDER (DIMODIFIKASI UNTUK SUPPORT SEARCH)
-// ==========================================
-
-function generateCalendar() {
-    const grid = document.getElementById('calendar');
-    const mNav = document.getElementById('monthYearNav');
-    if (!grid) return;
-    
-    grid.innerHTML = '';
-    const y = current.getFullYear();
-    const m = current.getMonth();
-    const namaBulan = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
-    mNav.innerText = `${namaBulan[m]} ${y}`;
-
-    // Header hari
-    HARI.forEach((h, i) => {
-        const el = document.createElement('div');
-        el.innerText = h.substring(0, 3);
-        el.className = 'header-day' + (i === 0 ? ' sunday-red' : '');
-        grid.appendChild(el);
-    });
-
-    const firstDay = new Date(y, m, 1).getDay();
-    const daysInMonth = new Date(y, m + 1, 0).getDate();
-
-    for (let i = 0; i < firstDay; i++) grid.appendChild(document.createElement('div'));
-
-    for (let d = 1; d <= daysInMonth; d++) {
-        const dateObj = new Date(y, m, d);
-        const p = getPasaran(dateObj);
-        const cell = document.createElement('div');
-        cell.className = 'calendar-day';
-        
-        if (dateObj.getDay() === 0) cell.classList.add('sunday-red');
-        if (dateObj.toDateString() === TODAY.toDateString()) cell.classList.add('today-highlight');
-        
-        cell.innerHTML = `<div class="date-num">${d}</div><div class="pasaran-text">${p}</div>`;
-        
-        cell.onclick = () => {
-            const savedToken = localStorage.getItem('kalender_token_tius');
-            
-            if (savedToken && checkTokenLogic(savedToken)) {
-                // Update input search dengan tanggal yang dipilih
-                const searchInput = document.getElementById('dateSearchInput');
-                if (searchInput) {
-                    const selectedDateStr = dateObj.toISOString().split('T')[0];
-                    searchInput.value = selectedDateStr;
-                }
-                
-                document.querySelectorAll('.calendar-day').forEach(c => c.classList.remove('selected-day'));
-                cell.classList.add('selected-day');
-                updateDetail(dateObj, p);
-            } else {
-                showTokenModal();
-            }
-        };
-        grid.appendChild(cell);
-    }
-    
-    // Setelah render, cek apakah ada tanggal yang sedang dicari
-    const searchInput = document.getElementById('dateSearchInput');
-    if (searchInput && searchInput.value) {
-        const searchedDate = new Date(searchInput.value + 'T00:00:00');
-        if (!isNaN(searchedDate.getTime()) && 
-            searchedDate.getFullYear() === y && 
-            searchedDate.getMonth() === m) {
-            setTimeout(() => highlightSearchedDate(searchedDate), 100);
-        }
-    }
-}
-
-// ==========================================
-// UPDATE DETAIL LENGKAP (TIDAK BERUBAH)
+// UPDATE DETAIL LENGKAP DENGAN RAMALAN SHIO & WUKU
 // ==========================================
 
 async function updateDetail(date, pasaran) {
@@ -1197,7 +1095,6 @@ async function updateDetail(date, pasaran) {
         const nPasaran = NEPTU_PASARAN[pasaran] || 0;
         const neptu = nHari + nPasaran;
         
-        const wukuName = getWuku(date);
         const infoJawa = getTanggalJawa(date);
         const siklusBesar = getSiklusBesar(infoJawa.tahun);
         const mangsa = getMangsaInfo(date);
@@ -1207,38 +1104,28 @@ async function updateDetail(date, pasaran) {
         const nasib5 = PEMBAGI_5[neptu % 5] || PEMBAGI_5[0];
         const arahMeditasi = getArahMeditasi(neptu);
         const usia = hitungUsiaLengkap(date);
+        const wukuName = getWuku(date);
+        
+        // Get wuku description from external data
+        const wukuDescription = await getWukuDescription(wukuName);
         
         const sifatHariIni = DATA_SIFAT_HARI[h] || "-";
         const sifatPasaranIni = DATA_SIFAT_PASARAN[pasaran.toUpperCase()] || "-";
-
         const watakNeptu = DATA_WATAK_NEPTU[neptu] || null;
+
         const namaBulanMasehi = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
         const tglMasehiLengkap = `${date.getDate()} ${namaBulanMasehi[date.getMonth()]} ${date.getFullYear()}`;
 
-        // Ambil data wuku dari file eksternal
-        let teksWuku = "Detail wuku sedang dimuat...";
-        try {
-            // Cek apakah data wuku sudah dimuat
-            if (Object.keys(DATA_WUKU).length === 0) {
-                // Jika belum, tunggu sampai dimuat
-                await loadWukuData();
-            }
-            
-            if (DATA_WUKU[wukuName]) {
-                teksWuku = DATA_WUKU[wukuName];
-            } else {
-                teksWuku = `Data untuk wuku ${wukuName} tidak ditemukan.`;
-            }
-        } catch (error) {
-            console.error('Error loading wuku data:', error);
-            teksWuku = `Gagal memuat data wuku ${wukuName}.`;
-        }
+        // Get shio ramalan
+        const ramalanShio = await getRamalanShioHarian(date);
         
+        // Data Sri Jati
         const dataSriJati = TABEL_SRIJATI[neptu] || [];
 
         const isNaas = infoJawa.bulan.naas.includes(infoJawa.tanggal);
         const isTaliWangke = (wetonKey === infoJawa.bulan.taliWangke);
 
+        // Warning Naas
         let warningNaas = "";
         if (isNaas || isTaliWangke) {
             warningNaas = `<div style="background:#ffebee; color:#c62828; padding:12px; border-radius:8px; margin-bottom:15px; border-left:5px solid #d32f2f; font-size:0.85rem;">
@@ -1248,7 +1135,7 @@ async function updateDetail(date, pasaran) {
             </div>`;
         }
 
-        // Buat tabel Sri Jati
+        // Tabel Sri Jati
         let tabelHtml = `<table style="width:100%; border-collapse: collapse; margin-top:10px; font-size:0.85rem; border:1px solid #ddd;">
             <thead><tr style="background:#f9f9f9;">
                 <th style="border:1px solid #ddd; padding:8px; text-align:center;">Usia</th>
@@ -1281,7 +1168,7 @@ async function updateDetail(date, pasaran) {
         }
         tabelHtml += `</tbody></table>`;
 
-        // Tampilkan detail lengkap
+        // Detail lengkap dengan ramalan shio
         detailDiv.style.display = 'block';
         detailDiv.innerHTML = `
             <div id="printableArea" class="card-result" style="background:#fff; padding:25px; border-radius:12px; border:1px solid #eee; box-shadow: 0 4px 15px rgba(0,0,0,0.08); color:#000; max-width:800px; margin:0 auto;">
@@ -1299,6 +1186,65 @@ async function updateDetail(date, pasaran) {
                         <button onclick="shareWhatsApp()" style="background:#25D366; color:#fff; border:none; padding:10px 20px; border-radius:6px; cursor:pointer; font-weight:bold; display:flex; align-items:center; gap:8px;">
                             📱 Share WA
                         </button>
+                    </div>
+                </div>
+                
+                <!-- RAMALAN SHIO HARIAN -->
+                <div class="shio-ramalan-card">
+                    <h3 style="margin-top:0; border-bottom:2px solid rgba(255,255,255,0.3); padding-bottom:8px; display:flex; align-items:center; gap:10px;">
+                        <span style="font-size:1.5em;">🐉</span>
+                        Ramalan Shio ${ramalanShio.shio} Hari Ini
+                    </h3>
+                    
+                    <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(200px, 1fr)); gap:10px; margin-top:15px;">
+                        <div class="shio-category">
+                            <h4>🎯 Karir & Pekerjaan</h4>
+                            <p style="margin:0; font-size:0.9rem;">${ramalanShio.ramalan.karier}</p>
+                        </div>
+                        
+                        <div class="shio-category">
+                            <h4>💰 Keuangan</h4>
+                            <p style="margin:0; font-size:0.9rem;">${ramalanShio.ramalan.keuangan}</p>
+                        </div>
+                        
+                        <div class="shio-category">
+                            <h4>💖 Asmara & Hubungan</h4>
+                            <p style="margin:0; font-size:0.9rem;">${ramalanShio.ramalan.asmara}</p>
+                        </div>
+                        
+                        <div class="shio-category">
+                            <h4>🏥 Kesehatan</h4>
+                            <p style="margin:0; font-size:0.9rem;">${ramalanShio.ramalan.kesehatan}</p>
+                        </div>
+                    </div>
+                    
+                    <div style="margin-top:15px; padding-top:15px; border-top:1px solid rgba(255,255,255,0.3);">
+                        <div style="display:flex; justify-content:space-between; flex-wrap:wrap; gap:10px;">
+                            <div>
+                                <p style="margin:5px 0; font-size:0.9rem;"><strong>Elemen Shio:</strong> ${ramalanShio.elemen}</p>
+                                <p style="margin:5px 0; font-size:0.9rem;"><strong>Elemen Harian:</strong> ${ramalanShio.elemenHarian}</p>
+                            </div>
+                            <div>
+ <p style="margin:5px 0; font-size:0.9rem;">
+    <strong>Angka Hoki:</strong> ${ramalanShio.ramalan.hoki.angka.join(', ')}
+</p>
+
+<p style="margin:5px 0; font-size:0.9rem; border-top: 1px dotted rgba(255,255,255,0.3); padding-top: 5px;">
+    <strong>Kecocokan Shio:</strong> ${ramalanShio.kecocokan ? ramalanShio.kecocokan.join(', ') : '-'}
+</p>
+</div>
+
+                        </div>
+                        
+                        <div style="background:rgba(0,0,0,0.2); padding:12px; border-radius:6px; margin-top:10px;">
+                            <p style="margin:0; font-size:0.9rem; font-style:italic;">
+                                <strong>💡 Tips Hari Ini:</strong> ${ramalanShio.ramalan.tips}
+                            </p>
+                        </div>
+                        
+                        <p style="margin:10px 0 0; font-size:0.8rem; opacity:0.8; text-align:center;">
+                            🔄 Ramalan diperbarui setiap hari berdasarkan energi harian
+                        </p>
                     </div>
                 </div>
                 
@@ -1389,22 +1335,22 @@ async function updateDetail(date, pasaran) {
                 
                 <!-- Nasib Pembagi 5 -->
                 <div style="background:#e8f5e9; padding:20px; border-radius:10px; margin-bottom:20px; border:1px solid #c8e6c9;">
-    <h3 style="color:#2e7d32; margin-top:0; border-bottom:2px solid #a5d6a7; padding-bottom:8px;">
-        💎 Nasib Hidup: ${nasib5.nama}
-    </h3>
-    
-    <p style="font-weight:bold; margin-bottom:5px; color:#1b5e20;">Makna:</p>
-    <p style="font-size:0.95rem; line-height:1.6; margin:0 0 15px;">${nasib5.arti}</p>
+                    <h3 style="color:#2e7d32; margin-top:0; border-bottom:2px solid #a5d6a7; padding-bottom:8px;">
+                        💎 Nasib Hidup: ${nasib5.nama}
+                    </h3>
+                    
+                    <p style="font-weight:bold; margin-bottom:5px; color:#1b5e20;">Makna:</p>
+                    <p style="font-size:0.95rem; line-height:1.6; margin:0 0 15px;">${nasib5.arti}</p>
 
-    <p style="font-weight:bold; margin-bottom:5px; color:#1b5e20;">Aktivitas yang Disarankan:</p>
-    <ul style="font-size:0.9rem; line-height:1.5; margin:0 0 15px; padding-left:20px;">
-        ${nasib5.aktivitas_baik.map(item => `<li>${item}</li>`).join('')}
-    </ul>
+                    <p style="font-weight:bold; margin-bottom:5px; color:#1b5e20;">Aktivitas yang Disarankan:</p>
+                    <ul style="font-size:0.9rem; line-height:1.5; margin:0 0 15px; padding-left:20px;">
+                        ${nasib5.aktivitas_baik.map(item => `<li>${item}</li>`).join('')}
+                    </ul>
 
-    <div style="background:rgba(255,255,255,0.5); padding:10px; border-radius:5px; border-left:4px solid #2e7d32;">
-        <p style="font-size:0.9rem; font-style:italic; margin:0;"><strong>Saran:</strong> ${nasib5.saran}</p>
-    </div>
-</div>
+                    <div style="background:rgba(255,255,255,0.5); padding:10px; border-radius:5px; border-left:4px solid #2e7d32;">
+                        <p style="font-size:0.9rem; font-style:italic; margin:0;"><strong>Saran:</strong> ${nasib5.saran}</p>
+                    </div>
+                </div>
                 
                 <!-- Nasib Kematian -->
                 <div style="background:#fffcf0; padding:20px; border-radius:10px; margin-bottom:20px; border-left:4px solid #f1c40f;">
@@ -1424,7 +1370,7 @@ async function updateDetail(date, pasaran) {
                 <!-- Analisis Wuku -->
                 <div style="margin-bottom:20px; padding:20px; border:1px solid #d1c4e9; border-radius:10px; background:#f5f2ff;">
                     <h3 style="color:#5e35b1; margin-top:0; border-bottom:2px solid #b39ddb; padding-bottom:8px;">🛡️ Analisis Wuku ${wukuName}</h3>
-                    <div style="font-size:0.95rem; line-height:1.6; margin:10px 0 0;">${teksWuku}</div>
+                    <div style="font-size:0.95rem; line-height:1.6; margin:10px 0 0;">${wukuDescription}</div>
                 </div>
                 
                 <!-- Siklus Sri Jati -->
@@ -1462,7 +1408,7 @@ async function updateDetail(date, pasaran) {
 }
 
 // ==========================================
-// FITUR SALIN & SHARE (TIDAK BERUBAH)
+// FITUR SALIN & SHARE
 // ==========================================
 
 function copyToClipboard() {
@@ -1511,58 +1457,82 @@ function shareWhatsApp() {
 }
 
 // ==========================================
-// FUNGSI CARI WETON (LAMA)
-// ==========================================
-
-function searchWeton() {
-    const input = document.getElementById('dateInput');
-    if (!input || !input.value) {
-        alert("Silakan pilih tanggal terlebih dahulu!");
-        return;
-    }
-    
-    const target = new Date(input.value);
-    current = new Date(target.getFullYear(), target.getMonth(), 1);
-    
-    generateCalendar();
-    
-    const savedToken = localStorage.getItem('kalender_token_tius');
-    if (savedToken && checkTokenLogic(savedToken)) {
-        updateDetail(target, getPasaran(target));
-    } else {
-        showTokenModal();
-    }
-}
-
-// ==========================================
-// INITIAL START (DIMODIFIKASI)
+// INITIAL START DENGAN LOAD DATA WUKU
 // ==========================================
 
 document.addEventListener("DOMContentLoaded", async () => {
+    console.log('Kalender Jawa initialized with all features');
+    
     // Preload data wuku di background
     loadWukuData().then(() => {
-        console.log('Data Wuku siap digunakan');
+        console.log('✅ Data Wuku siap digunakan');
     }).catch(error => {
-        console.error('Gagal memuat data wuku:', error);
+        console.error('❌ Gagal memuat data wuku:', error);
     });
     
     // Inisialisasi kalender
     generateCalendar();
     
-    // Inisialisasi fitur cari tanggal
-    initDateSearch();
+    // Setup navigation
+    const prev = document.getElementById('prevMonth');
+    const next = document.getElementById('nextMonth');
+    
+    if(prev) prev.onclick = () => { 
+        current.setMonth(current.getMonth() - 1); 
+        generateCalendar(); 
+    };
+    
+    if(next) next.onclick = () => { 
+        current.setMonth(current.getMonth() + 1); 
+        generateCalendar(); 
+    };
+    
+    // Setup search button
+    const searchBtn = document.getElementById('searchDateBtn');
+    if (searchBtn) {
+        searchBtn.onclick = searchDate;
+    }
+    
+    // Setup search input
+    const searchInput = document.getElementById('dateSearchInput');
+    if (searchInput) {
+        // Set today's date
+        const today = new Date();
+        const todayStr = today.toISOString().split('T')[0];
+        searchInput.value = todayStr;
+        
+        searchInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                searchDate();
+            }
+        });
+    }
     
     // Tampilkan detail untuk hari ini jika token valid
     const savedToken = localStorage.getItem('kalender_token_tius');
     if (savedToken && checkTokenLogic(savedToken)) {
-        updateDetail(TODAY, getPasaran(TODAY));
+        // Tunggu sebentar lalu show today's detail
+        setTimeout(() => {
+            updateDetail(TODAY, getPasaran(TODAY));
+            
+            // Highlight today's cell
+            const cells = document.querySelectorAll('.calendar-day');
+            cells.forEach(cell => {
+                const dateNum = parseInt(cell.querySelector('.date-num')?.textContent);
+                if (dateNum === TODAY.getDate() && 
+                    current.getMonth() === TODAY.getMonth() &&
+                    current.getFullYear() === TODAY.getFullYear()) {
+                    cell.classList.add('selected-day');
+                }
+            });
+        }, 800);
     } else {
-        // Tampilkan info bahwa token dibutuhkan
+        // Tampilkan info token
         const detailDiv = document.getElementById('detail');
         if (detailDiv) {
             detailDiv.innerHTML = `
                 <div style="text-align:center; padding:40px 20px; background:#f8f9fa; border-radius:12px; border:2px dashed #ddd;">
-                    <h3 style="color:#D30000; margin-top:0;">🔐 Akses Premium</h3>
+                    <h3 style="color:#D30000; margin-top:0;">🔐 Akses Premium Kalender Jawa</h3>
                     <p style="margin-bottom:20px;">Untuk melihat detail lengkap weton, Anda perlu mengaktifkan token.</p>
                     <button onclick="showTokenModal()" style="
                         background:#D30000; 
@@ -1581,23 +1551,98 @@ document.addEventListener("DOMContentLoaded", async () => {
                     </p>
                 </div>
             `;
+            detailDiv.style.display = 'block';
         }
     }
-
-    const prev = document.getElementById('prevMonth');
-    const next = document.getElementById('nextMonth');
     
-    if(prev) prev.onclick = () => { 
-        current.setMonth(current.getMonth() - 1); 
-        generateCalendar(); 
-    };
-    if(next) next.onclick = () => { 
-        current.setMonth(current.getMonth() + 1); 
-        generateCalendar(); 
-    };
+    console.log('✅ Kalender Jawa siap digunakan dengan semua fitur lengkap!');
+    console.log('📊 Fitur yang aktif:');
+    console.log('   • Kalender Jawa lengkap');
+    console.log('   • Ramalan Shio harian');
+    console.log('   • Data Wuku eksternal');
+    console.log('   • Sistem Token');
+    console.log('   • Pencarian tanggal');
+    console.log('   • Semua perhitungan Neptu dan Primbon');
 });
 
+// --- KODE BARU UNTUK RAMALAN SHIO ---
 
+function getDailySeed(date) {
+    const d = new Date(date);
+    return d.getFullYear() * 10000 + (d.getMonth() + 1) * 100 + d.getDate();
+}
 
+async function getRamalanShioHarian(date) {
+    try {
+        const seed = getDailySeed(date);
+        const lunarData = getLunarShio(date); // Fungsi ini harus ada di file logic shio Anda
+        const shioName = lunarData.shio;
 
+        if (typeof RAMALAN_SHIO === 'undefined') {
+            throw new Error("Data ramalan-shio.js belum dimuat");
+        }
 
+        const shioData = RAMALAN_SHIO.shio.find(s => s.nama === shioName);
+        if (!shioData) return null;
+
+        const selectIndex = (arr) => arr[seed % arr.length];
+        const elemenHarian = RAMALAN_SHIO.siklusElemenHarian[seed % RAMALAN_SHIO.siklusElemenHarian.length];
+
+        return {
+            shio: shioName,
+            elemen: shioData.elemen,
+            elemenHarian: elemenHarian,
+            kecocokan: shioData.kecocokan, 
+            ramalan: {
+                karier: selectIndex(shioData.kategori.karier),
+                keuangan: selectIndex(shioData.kategori.keuangan),
+                asmara: selectIndex(shioData.kategori.asmara),
+                kesehatan: selectIndex(shioData.kategori.kesehatan),
+                hoki: shioData.kategori.hoki,
+                tips: shioData.kategori.tips
+            }
+        };
+    } catch (error) {
+        console.error("Error Shio:", error);
+        return null;
+    }
+}
+
+// Ini adalah fungsi update UI yang Anda cari tadi
+function updateShioUI(data) {
+    if(!data) return;
+
+    // Menampilkan data ke elemen HTML
+    if(document.getElementById('shio-harian-title')) {
+        document.getElementById('shio-harian-title').innerText = `Ramalan Shio ${data.shio} Hari Ini`;
+    }
+    
+    // Update data teks (Pastikan ID ini ada di HTML Anda)
+    const ids = {
+        'shio-elemen-text': data.elemen,
+        'elemen-harian-text': data.elemenHarian,
+        'ramalan-karier-text': data.ramalan.karier,
+        'ramalan-keuangan-text': data.ramalan.keuangan,
+        'ramalan-asmara-text': data.ramalan.asmara,
+        'ramalan-kesehatan-text': data.ramalan.kesehatan,
+        'tips-harian-text': data.ramalan.tips
+    };
+
+    for (const [id, value] of Object.entries(ids)) {
+        const el = document.getElementById(id);
+        if(el) el.innerText = value;
+    }
+
+    // Menampilkan Kecocokan Shio secara otomatis
+    const hokiContainer = document.querySelector('.shio-hoki-info');
+    if (hokiContainer && data.kecocokan) {
+        let cocokElem = document.getElementById('shio-cocok-row');
+        if (!cocokElem) {
+            cocokElem = document.createElement('p');
+            cocokElem.id = 'shio-cocok-row';
+            cocokElem.style.marginTop = "8px"; 
+            hokiContainer.appendChild(cocokElem);
+        }
+        cocokElem.innerHTML = `<strong>Kecocokan Shio:</strong> ${data.kecocokan.join(", ")}`;
+    }
+}
